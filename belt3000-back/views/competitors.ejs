@@ -1,0 +1,19 @@
+<% layout('./layout') -%>
+<p>Lista zawodników</p>
+<a href="/add-competitor">Dodaj zawodnika</a>
+<ul>
+  <% competitors.map(c => {%>
+  <li>
+    <%= c.firstname %> <%= c.lastname %> <%= c.isAdult ? 'Dorosły' : 'Junior' %>
+    <button style="cursor: pointer" id="delete" value="<%= c.id %>">Usuń</button>
+  </li>
+  <% })%>
+</ul>
+
+<script>
+  document.getElementById('delete').onclick = () => {
+    fetch('/competitor/' + document.getElementById('delete').value, {
+      method: 'GET',
+    });
+  };
+</script>
