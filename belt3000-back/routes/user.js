@@ -1,36 +1,34 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
-const { check, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 router.get('/competitors', async (req, res) => {
   const competitors = await User.find({});
   res.json(competitors);
 });
 
-// router.get('/add-competitor', async (req, res) => {
-//   res.render('add-competitor');
-// });
-
 router.delete('/competitor/:id', async (req, res) => {
-  console.log(req.params);
   await User.findOneAndDelete({ _id: req.params.id });
   res.status(200);
 });
 
 router.post(
   '/add-competitor',
-  // [
-  //   check('firstname', 'firstname is required').not().isEmpty(),
-  //   check('lastname', 'lastname is required').not().isEmpty(),
-  //   check('isAdult', 'isAdult is required').not().isEmpty(),
-  // ],
+  [
+    body('firstname', 'firstname is required').not().isEmpty(),
+    body('lastname', 'lastname is required').not().isEmpty(),
+    body('isAdult', 'isAdult is required').exists(),
+  ],
   async (req, res) => {
-    const result = validationResult(req);
-    var errors = result.errors;
-    if (!result.isEmpty()) {
-      res.status(400).json(errors);
+    console.log(req.body);
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(422).json({ errors: errors.array() });
+      return;
     }
+
     const newUser = new User();
     newUser.firstname = req.body.firstname;
     newUser.lastname = req.body.lastname;
@@ -39,9 +37,11 @@ router.post(
       await newUser.save();
     } catch (e) {
       console.log(e);
+      res.status(500);
       return;
     }
-    return res.status(201);
+    console.log(newUser);
+    return res.status(201).json(newUser);
   },
 );
 

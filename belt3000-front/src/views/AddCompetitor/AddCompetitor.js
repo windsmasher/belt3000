@@ -1,46 +1,87 @@
 import React from 'react';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import SuccessMessage from '../../components/SuccessMessage/SuccessMessage';
 import { Config } from '../../config/config';
 
 class AddCompetitor extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { firstname: '', lastname: '', isadult: false };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.state = {
+      competitor: { firstname: '', lastname: '', isAdult: false },
+      errorMsg: null,
+      successMsg: null,
+    };
   }
 
-  handleChange(event) {
+  handleChange = event => {
     const name = event.target.name;
     const value = event.target.value;
-    this.setState({ [name]: value });
-    console.log(this.state);
-  }
+    this.setState({ competitor: { ...this.state.competitor, [name]: value } });
+  };
 
-  async handleSubmit(event) {
-    console.log(JSON.stringify(this.state));
-    await fetch(`${Config.API_URL}add-competitor`, {
-      method: 'POST',
-      body: JSON.stringify(this.state),
-    });
+  handleCheckbox = event => {
+    // console.log(event.target.checked);
+    this.setState({ competitor: { ...this.state.competitor, isAdult: event.target.checked } });
+    console.log(this.state.competitor.isAdult);
+  };
+
+  handleSubmit = event => {
     event.preventDefault();
-  }
+    console.log('before', this.state.competitor);
+    fetch(`${Config.API_URL}add-competitor`, {
+      method: 'POST',
+      body: JSON.stringify(this.state.competitor),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        console.log(response.status);
+        if (response.status !== 201) {
+          this.setState({ errorMsg: 'Wystąpił błąd. Niepoprawne dane.', successMsg: null });
+        } else {
+          this.setState({ successMsg: 'Poprawnie dodano zawodnika.', errorMsg: null });
+        }
+      })
+      .catch(e => {
+        console.log(e);
+        this.setState({ errorMsg: 'Wystąpił błąd.' });
+      });
+  };
 
   render() {
     return (
       <div>
+        {this.state.errorMsg && <ErrorMessage message={this.state.errorMsg} />}
+        {this.state.successMsg && <SuccessMessage message={this.state.successMsg} />}
         Dodaj zawodnika
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={e => this.handleSubmit(e)}>
           <label>
             Imię:
-            <input type="text" name="firstname" value={this.state.firstname} onChange={this.handleChange} />
+            <input
+              type="text"
+              name="firstname"
+              value={this.state.competitor.firstname}
+              onChange={e => this.handleChange(e)}
+            />
           </label>
           <label>
             Nazwisko:
-            <input type="text" name="lastname" value={this.state.lastname} onChange={this.handleChange} />
+            <input
+              type="text"
+              name="lastname"
+              value={this.state.competitor.lastname}
+              onChange={e => this.handleChange(e)}
+            />
           </label>
           <label>
             Czy jest dorosły:
-            <input type="checkbox" name="isadult" value={this.state.isadult} onChange={this.handleChange} />
+            <input
+              type="checkbox"
+              name="isAdult"
+              onChange={e => this.handleCheckbox(e)}
+              checked={this.state.competitor.isAdult}
+            />
           </label>
           <input type="submit" value="Wyślij" />
         </form>
