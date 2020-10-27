@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 
-mongoose.connect('mongodb://root:root123@ds245927.mlab.com:45927/pug-node');
+mongoose.connect('mongodb://root:root123@ds249355.mlab.com:49355/belt3000');
 
 app.use(cors());
 app.use(bodyParser.json());
