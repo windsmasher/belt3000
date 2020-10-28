@@ -28,13 +28,18 @@ class Competitors extends React.Component {
     } catch (e) {
       this.setState({ errorDeleteCompetitor: true });
     }
+    fetch(`${Config.API_URL}competitors`)
+      .then(response => response.json())
+      .then(competitors => this.setState({ competitors }))
+      .catch(() => this.setState({ errorListFetch: true }));
   };
 
   render = () => {
     const competitorsList = this.state.competitors.map(comp => (
       <li>
         {`${comp.firstname} ${comp.lastname}`}
-        {Boolean(comp.isAdult) === true ? ' DOROSŁY ' : ' JUNIOR '}
+        {Boolean(comp.isAdult) === true ? ' (dorosły)' : ' (U18)'}
+        {` - pas ${comp.belt}${comp.stripes === 0 ? ' ' : ', ' + comp.stripes + ' belki '}`}
         <a href="#" onClick={() => this.handleDelete(comp._id)}>
           Usuń
         </a>

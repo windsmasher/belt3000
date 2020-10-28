@@ -7,7 +7,7 @@ class AddCompetitor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      competitor: { firstname: '', lastname: '', isAdult: false },
+      competitor: { firstname: '', lastname: '', isAdult: false, belt: 'biały', stripes: '0' },
       errorMsg: null,
       successMsg: null,
     };
@@ -20,7 +20,6 @@ class AddCompetitor extends React.Component {
   };
 
   handleCheckbox = event => {
-    // console.log(event.target.checked);
     this.setState({ competitor: { ...this.state.competitor, isAdult: event.target.checked } });
     console.log(this.state.competitor.isAdult);
   };
@@ -82,6 +81,43 @@ class AddCompetitor extends React.Component {
               onChange={e => this.handleCheckbox(e)}
               checked={this.state.competitor.isAdult}
             />
+          </label>
+          {this.state.competitor.isAdult === true ? (
+            <label>
+              Kolor pasa:
+              <select name="belt" id="belt" value={this.state.competitor.belt} onChange={e => this.handleChange(e)}>
+                <option value="biały">biały</option>
+                <option value="niebieski">niebieski</option>
+                <option value="purpurowy">purpurowy</option>
+                <option value="brązowy">brązowy</option>
+                <option value="czarny">czarny</option>
+              </select>
+            </label>
+          ) : (
+            <label>
+              Kolor pasa:
+              <select name="belt" id="belt" value={this.state.competitor.belt} onChange={e => this.handleChange(e)}>
+                <option value="biały">biały</option>
+                <option value="żółty">żółty</option>
+                <option value="pomarańczowy">pomarańczowy</option>
+                <option value="brązowy">brązowy</option>
+              </select>
+            </label>
+          )}
+          <label>
+            Ilość belek:
+            <select
+              name="stripes"
+              id="stripes"
+              value={this.state.competitor.stripes}
+              onChange={e => this.handleChange(e)}
+            >
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
           </label>
           <input type="submit" value="Wyślij" />
         </form>
