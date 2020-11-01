@@ -9,22 +9,21 @@ const UserSchema = mongoose.Schema({
   lastname: {
     type: String,
     required: true,
-    unique: true,
   },
   isAdult: {
     type: Boolean,
-    required: true,
+    required: false,
   },
   belt: {
     type: String,
     enum: ['biały', 'niebieski', 'purpurowy', 'brązowy', 'czarny', 'żółty', 'pomarańczowy', 'zielony'],
-    required: true,
+    required: false,
   },
   stripes: {
     type: Number,
     min: 0,
     max: 4,
-    required: true,
+    required: false,
   },
 });
 

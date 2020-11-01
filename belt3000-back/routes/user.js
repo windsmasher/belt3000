@@ -1,19 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user');
-const { validateAddCompetitorReq } = require('../middleware/validate-add-competitor-req');
+const User = require('../models/user.model');
+const { validateAddCompetitor } = require('../middleware/validate-add-competitor');
+const withAuth = require('../middleware/auth');
 
-router.get('/competitors', async (req, res) => {
+router.get('/competitors', withAuth, async (req, res) => {
   const competitors = await User.find({});
   res.json(competitors);
 });
 
-router.delete('/competitor/:id', async (req, res) => {
+router.delete('/competitor/:id', withAuth, async (req, res) => {
   await User.findOneAndDelete({ _id: req.params.id });
   return res.status(200).send();
 });
 
-router.post('/add-competitor', validateAddCompetitorReq, async (req, res, next) => {
+router.post('/add-competitor', withAuth, validateAddCompetitor, async (req, res, next) => {
   const newUser = new User();
   newUser.firstname = req.body.firstname;
   newUser.lastname = req.body.lastname;

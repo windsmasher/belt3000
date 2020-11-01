@@ -6,6 +6,8 @@ import Nominations from './views/Nominations/Nominations';
 import Navbar from './components/Navbar/Navbar';
 import AddCompetitor from './views/AddCompetitor/AddCompetitor';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
+import RegisterAdmin from './views/Register/Register';
+import Login from './views/Login/Login';
 
 function App() {
   return (
@@ -22,6 +24,12 @@ function App() {
             </Route>
             <Route path="/add-competitor">
               <AddCompetitor />{' '}
+            </Route>
+            <Route path="/register-admin">
+              <RegisterAdmin />{' '}
+            </Route>
+            <Route path="/login-admin">
+              <Login />{' '}
             </Route>
             <Route exact path="/">
               <Home />

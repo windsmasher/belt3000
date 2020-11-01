@@ -1,6 +1,6 @@
 const { body, validationResult } = require('express-validator');
 
-exports.validateAddCompetitorReq = [
+exports.validateAddCompetitor = [
   body('firstname', 'firstname property is required').not().isEmpty(),
   body('lastname', 'lastname property is required').not().isEmpty(),
   body('isAdult', 'isAdult property is required').exists(),
