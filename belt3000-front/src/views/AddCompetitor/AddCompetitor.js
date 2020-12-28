@@ -27,12 +27,10 @@ class AddCompetitor extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
     console.log('before', this.state.competitor);
-    fetch(`${Config.API_URL}add-competitor`, {
+    fetch(`${Config.API_URL}competitor/add`, {
       method: 'POST',
       body: JSON.stringify(this.state.competitor),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
     })
       .then(response => {
         console.log(response.status);

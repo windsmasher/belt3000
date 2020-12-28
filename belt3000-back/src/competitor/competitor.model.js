@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const UserSchema = mongoose.Schema({
+const CompetitorSchema = mongoose.Schema({
   firstname: {
     type: String,
     required: true,
@@ -27,4 +27,4 @@ const UserSchema = mongoose.Schema({
   },
 });
 
-const User = (module.exports = mongoose.model('User', UserSchema));
+const Competitor = (module.exports = mongoose.model('Competitor', CompetitorSchema));

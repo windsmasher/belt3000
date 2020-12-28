@@ -22,7 +22,7 @@ class RegisterAdmin extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
     console.log('before', this.state.register);
-    fetch(`${Config.API_URL}admin/register-admin`, {
+    fetch(`${Config.API_URL}user/register-admin`, {
       method: 'POST',
       body: JSON.stringify(this.state.register),
       headers: {

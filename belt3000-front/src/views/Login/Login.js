@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Config } from '../../config/config';
 import { withRouter } from 'react-router-dom';
+import axios from 'axios';
 
 class Login extends Component {
   constructor(props) {
@@ -18,15 +19,12 @@ class Login extends Component {
   };
   onSubmit = event => {
     event.preventDefault();
-    fetch(`${Config.API_URL}admin/login`, {
-      method: 'POST',
-      body: JSON.stringify(this.state),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => {
+    axios
+      .post(`${Config.API_URL}auth/login`, this.state)
+      .then(async res => {
         if (res.status === 200) {
+          console.log(res);
+          localStorage.setItem('token', res.data.token);
           this.props.history.push('/');
         } else {
           const error = new Error(res.error);
@@ -34,8 +32,8 @@ class Login extends Component {
         }
       })
       .catch(err => {
+        console.log(err);
         console.error(err);
-        alert('Error logging in please try again');
       });
   };
   render() {

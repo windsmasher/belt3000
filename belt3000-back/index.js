@@ -6,21 +6,34 @@ const app = express();
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
-mongoose.connect('mongodb://root:root123@ds249355.mlab.com:49355/belt3000');
-
-app.use(cors());
+const uri = 'mongodb+srv://windsmasher:agent007@cluster0.iplom.mongodb.net/belt3000?retryWrites=true&w=majority';
+try {
+  mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, err => {
+    if (err) {
+      console.log(err);
+      throw new Error(err);
+    }
+    console.log('Connected to MongoDB.');
+  });
+} catch (error) {
+  console.log('Could not connect to DB.');
+}
++app.use(cors());
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser());
 
-const user = require('./routes/user');
-const nomination = require('./routes/nomination');
-const admin = require('./routes/admin');
-const withAuth = require('./middleware/auth');
+const competitor = require('./src/competitor/competitor.controller');
+const nomination = require('./src/nomination/nomination.controller');
+const user = require('./src/user/user.controller');
+const auth = require('./src/auth/auth.controller');
 
-app.use('/', user);
-app.use('/', nomination);
-app.use('/admin/', admin);
+const withAuth = require('./src/auth/auth.middleware');
+
+app.use('/competitor/', competitor);
+app.use('/nomination/', nomination);
+app.use('/user/', user);
+app.use('/auth/', auth);
 
 // app.use(function (err, req, res, next) {
 //   console.error(err.stack);

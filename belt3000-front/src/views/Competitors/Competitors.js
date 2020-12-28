@@ -2,6 +2,7 @@ import React from 'react';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import { Config } from '../../config/config';
 import './Competitors.css';
+import axios from 'axios';
 
 class Competitors extends React.Component {
   constructor(props) {
@@ -13,25 +14,32 @@ class Competitors extends React.Component {
     };
   }
 
-  componentDidMount = () => {
-    fetch(`${Config.API_URL}competitors`)
-      .then(response => response.json())
-      .then(competitors => this.setState({ competitors }))
-      .catch(() => this.setState({ errorListFetch: true }));
+  fetchAllCompetitors = async () => {
+    try {
+      const response = await axios.get(`${Config.API_URL}competitor/all`, {
+        headers: { authorization: localStorage.getItem('token') },
+      });
+      const competitors = await response.data;
+      this.setState({ competitors });
+    } catch (err) {
+      this.setState({ errorListFetch: true });
+      console.log(`Competitors fetch error: ${err}`);
+    }
+  };
+
+  componentDidMount = async () => {
+    this.fetchAllCompetitors();
   };
 
   handleDelete = async id => {
     try {
-      await fetch(`${Config.API_URL}competitor/${id}`, {
-        method: 'DELETE',
+      await axios.delete(`${Config.API_URL}competitor/${id}`, {
+        headers: { authorization: localStorage.getItem('token') },
       });
     } catch (e) {
       this.setState({ errorDeleteCompetitor: true });
     }
-    fetch(`${Config.API_URL}competitors`)
-      .then(response => response.json())
-      .then(competitors => this.setState({ competitors }))
-      .catch(() => this.setState({ errorListFetch: true }));
+    this.fetchAllCompetitors();
   };
 
   render = () => {
