@@ -21,29 +21,25 @@ class AddCompetitor extends React.Component {
 
   handleCheckbox = event => {
     this.setState({ competitor: { ...this.state.competitor, isAdult: event.target.checked } });
-    console.log(this.state.competitor.isAdult);
   };
 
-  handleSubmit = event => {
+  handleSubmit = async event => {
     event.preventDefault();
-    console.log('before', this.state.competitor);
-    fetch(`${Config.API_URL}competitor/add`, {
-      method: 'POST',
-      body: JSON.stringify(this.state.competitor),
-      headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
-    })
-      .then(response => {
-        console.log(response.status);
-        if (response.status !== 201) {
-          this.setState({ errorMsg: 'Wystąpił błąd. Niepoprawne dane.', successMsg: null });
-        } else {
-          this.setState({ successMsg: 'Poprawnie dodano zawodnika.', errorMsg: null });
-        }
-      })
-      .catch(e => {
-        console.log(e);
-        this.setState({ errorMsg: 'Wystąpił błąd.' });
+    try {
+      const res = await fetch(`${Config.API_URL}competitor/add`, {
+        method: 'POST',
+        body: JSON.stringify(this.state.competitor),
+        headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
       });
+
+      if (res.status !== 201) {
+        this.setState({ errorMsg: 'Wystąpił błąd. Niepoprawne dane.', successMsg: null });
+      } else {
+        this.setState({ successMsg: 'Poprawnie dodano zawodnika.', errorMsg: null });
+      }
+    } catch (err) {
+      this.setState({ errorMsg: 'Wystąpił błąd.' });
+    }
   };
 
   render() {

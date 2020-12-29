@@ -14,12 +14,15 @@ const Navbar = () => (
       <NavLink to="/nominations">
         <div className="navbar__pill">Nominacje</div>
       </NavLink>
-      <NavLink to="/register-admin">
-        <div className="navbar__pill">Zarejestruj się</div>
-      </NavLink>
-      <NavLink to="/login-admin">
-        <div className="navbar__pill">Zaloguj się</div>
-      </NavLink>
+      {localStorage.getItem('token') ? (
+        <a href="/" onClick={() => localStorage.clear()}>
+          Wyloguj się
+        </a>
+      ) : (
+        <NavLink to="/login-admin">
+          <div className="navbar__pill">Zaloguj się</div>
+        </NavLink>
+      )}
     </div>
   </nav>
 );

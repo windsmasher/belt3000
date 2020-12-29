@@ -25,6 +25,23 @@ const CompetitorSchema = mongoose.Schema({
     max: 4,
     required: false,
   },
+  nomination: {
+    type: [
+      {
+        date: Date,
+        newBelt: {
+          type: String,
+          enum: ['niebieski', 'purpurowy', 'brązowy', 'czarny', 'żółty', 'pomarańczowy', 'zielony'],
+        },
+        numberOfStripesAdded: {
+          type: Number,
+          min: 0,
+          max: 4,
+        },
+        description: String,
+      },
+    ],
+  },
 });
 
 const Competitor = (module.exports = mongoose.model('Competitor', CompetitorSchema));

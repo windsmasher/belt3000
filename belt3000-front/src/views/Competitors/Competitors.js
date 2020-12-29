@@ -2,7 +2,6 @@ import React from 'react';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import { Config } from '../../config/config';
 import './Competitors.css';
-import axios from 'axios';
 
 class Competitors extends React.Component {
   constructor(props) {
@@ -16,10 +15,10 @@ class Competitors extends React.Component {
 
   fetchAllCompetitors = async () => {
     try {
-      const response = await axios.get(`${Config.API_URL}competitor/all`, {
+      const response = await fetch(`${Config.API_URL}competitor/all`, {
         headers: { authorization: localStorage.getItem('token') },
       });
-      const competitors = await response.data;
+      const competitors = await response.json();
       this.setState({ competitors });
     } catch (err) {
       this.setState({ errorListFetch: true });
@@ -33,9 +32,13 @@ class Competitors extends React.Component {
 
   handleDelete = async id => {
     try {
-      await axios.delete(`${Config.API_URL}competitor/${id}`, {
+      const res = await fetch(`${Config.API_URL}competitor/${id}`, {
+        method: 'DELETE',
         headers: { authorization: localStorage.getItem('token') },
       });
+      if (res.status !== 200) {
+        this.setState({ errorDeleteCompetitor: true });
+      }
     } catch (e) {
       this.setState({ errorDeleteCompetitor: true });
     }

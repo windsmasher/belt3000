@@ -32,3 +32,18 @@
     transform: rotate(360deg);
   }
 }
+
+label {
+  padding: 10px;
+}
+
+input {
+  padding: 5px;
+  margin: 5px;
+}
+
+select {
+  padding: 5px;
+  margin: 5px;
+  cursor: pointer;
+}

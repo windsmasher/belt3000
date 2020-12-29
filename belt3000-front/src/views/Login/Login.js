@@ -1,63 +1,73 @@
 import React, { Component } from 'react';
 import { Config } from '../../config/config';
 import { withRouter } from 'react-router-dom';
-import axios from 'axios';
+import { NavLink } from 'react-router-dom';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      password: '',
+      login: {
+        email: '',
+        password: '',
+      },
+      errorLogin: false,
     };
   }
   handleInputChange = event => {
     const { value, name } = event.target;
     this.setState({
-      [name]: value,
+      login: { ...this.state.login, [name]: value },
     });
   };
-  onSubmit = event => {
+  onSubmit = async event => {
     event.preventDefault();
-    axios
-      .post(`${Config.API_URL}auth/login`, this.state)
-      .then(async res => {
-        if (res.status === 200) {
-          console.log(res);
-          localStorage.setItem('token', res.data.token);
-          this.props.history.push('/');
-        } else {
-          const error = new Error(res.error);
-          throw error;
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        console.error(err);
+    try {
+      const res = await fetch(`${Config.API_URL}auth/login`, {
+        method: 'POST',
+        body: JSON.stringify(this.state.login),
+        headers: { 'Content-Type': 'application/json' },
       });
+      if (res.status === 200) {
+        const data = await res.json();
+        localStorage.setItem('token', data.token);
+        this.props.history.push('/');
+      } else {
+        this.setState({ errorLogin: true });
+      }
+    } catch (e) {
+      this.setState({ errorLogin: true });
+    }
   };
   render() {
     return (
-      <form onSubmit={this.onSubmit}>
-        <h1>Login Below!</h1>
-        <input
-          type="email"
-          name="email"
-          placeholder="jan.kowalski@gmail.com"
-          value={this.state.email}
-          onChange={this.handleInputChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Wpisz hasło"
-          value={this.state.password}
-          onChange={this.handleInputChange}
-          required
-        />
-        <input type="submit" value="Submit" />
-      </form>
+      <div>
+        {this.state.errorLogin && <ErrorMessage message={'Błąd logowania.'} />}
+        <form onSubmit={this.onSubmit}>
+          <input
+            type="email"
+            name="email"
+            placeholder="jan.kowalski@gmail.com"
+            value={this.state.login.email}
+            onChange={this.handleInputChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Wpisz hasło"
+            value={this.state.login.password}
+            onChange={this.handleInputChange}
+            required
+          />
+          <input type="submit" value="Zaloguj" />
+        </form>
+        <p>Nie masz konta?</p>
+        <NavLink to="/register-admin">
+          <div className="navbar__pill">Zarejestruj się</div>
+        </NavLink>
+      </div>
     );
   }
 }
