@@ -1,6 +1,7 @@
 import React from 'react';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import { Config } from '../../config/config';
+import { Spinner, Table, Button } from 'react-bootstrap';
 import './Competitors.css';
 
 class Competitors extends React.Component {
@@ -10,6 +11,7 @@ class Competitors extends React.Component {
       competitors: [],
       errorListFetch: false,
       errorDeleteCompetitor: false,
+      competitorsDownloaded: false,
     };
   }
 
@@ -20,6 +22,7 @@ class Competitors extends React.Component {
       });
       const competitors = await response.json();
       this.setState({ competitors });
+      this.setState({ competitorsDownloaded: true });
     } catch (err) {
       this.setState({ errorListFetch: true });
       console.log(`Competitors fetch error: ${err}`);
@@ -46,24 +49,56 @@ class Competitors extends React.Component {
   };
 
   render = () => {
-    const competitorsList = this.state.competitors.map(comp => (
-      <li>
-        {`${comp.firstname} ${comp.lastname}`}
-        {Boolean(comp.isAdult) === true ? ' (dorosły)' : ' (U18)'}
-        {` - pas ${comp.belt}${comp.stripes === 0 ? ' ' : ', ' + comp.stripes + ' belki '}`}
-        <a href="#" onClick={() => this.handleDelete(comp._id)}>
-          Usuń
-        </a>
-      </li>
+    const competitorsList = this.state.competitors.map((comp, index) => (
+      <tr>
+        <th>{index + 1}</th>
+        <th>{comp.firstname}</th>
+        <th>{comp.lastname}</th>
+        <th>{Boolean(comp.isAdult) === true ? 'Dorosły' : 'U18'}</th>
+        <th>{comp.belt}</th>
+        <th>{comp.stripes}</th>
+        <th>
+          {' '}
+          <a href="#" onClick={() => this.handleDelete(comp._id)}>
+            Usuń
+          </a>
+        </th>
+      </tr>
     ));
     return (
       <div>
         {this.state.errorListFetch && <ErrorMessage message={'Błąd pobrania listy zawodników.'} />}
         {this.state.errorDeleteCompetitor && <ErrorMessage message={'Usunięcie zawodnika nie powiodło się.'} />}
-        <a href="/add-competitor">Dodaj zawodnika</a>
+        <div className="container-center">
+          <a href="/add-competitor">
+            <Button className="btn-wide" variant="outline-info">
+              Dodaj zawodnika
+            </Button>
+          </a>
+        </div>
         <div>
-          <p>Zawodnicy</p>
-          <ul className="list">{competitorsList}</ul>
+          {this.state.competitorsDownloaded ? (
+            <Table>
+              <thead>
+                <tr>
+                  <th>Lp.</th>
+                  <th>Imię</th>
+                  <th>Nazwisko</th>
+                  <th>Kategoria wiekowa</th>
+                  <th>Kolor pasa</th>
+                  <th>Ilość belek</th>
+                  <th>Usuń zawodnika</th>
+                </tr>
+              </thead>
+              <tbody>{competitorsList}</tbody>
+            </Table>
+          ) : (
+            <div className="container-spinner">
+              <Spinner animation="border" role="status">
+                <span className="sr-only">Loading...</span>
+              </Spinner>
+            </div>
+          )}
         </div>
       </div>
     );

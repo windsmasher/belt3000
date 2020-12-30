@@ -1,6 +1,26 @@
-.navbar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin: 40px 0;
+.nav {
+  padding: 50px;
+  font-size: 20px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.nav-item a {
+  color: black;
+}
+
+.nav-item a:hover {
+  text-decoration: none;
+  color: black;
+}
+
+.nav-unactive {
+  padding: 5px;
+  border: 2px solid white;
+  border-radius: 3px;
+}
+
+.nav-active {
+  border: 2px solid black;
+  border-radius: 3px;
 }

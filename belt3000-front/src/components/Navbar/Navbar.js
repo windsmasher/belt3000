@@ -1,30 +1,39 @@
 import React from 'react';
+import { Nav } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = () => (
-  <nav>
-    <div className="navbar">
-      <NavLink to="/" exact>
-        <div>Strona główna</div>
+  <Nav fill>
+    <Nav.Item>
+      <NavLink to="/" exact activeClassName="nav-active" className="nav-unactive">
+        Strona główna
       </NavLink>
-      <NavLink to="/competitors">
-        <div className="navbar__pill">Zawodnicy</div>
+    </Nav.Item>
+    <Nav.Item>
+      <NavLink to="/competitors" activeClassName="nav-active" className="nav-unactive">
+        Zawodnicy
       </NavLink>
-      <NavLink to="/nominations">
-        <div className="navbar__pill">Nominacje</div>
+    </Nav.Item>
+    <Nav.Item>
+      <NavLink to="/nominations" activeClassName="nav-active" className="nav-unactive">
+        Nominacje
       </NavLink>
-      {localStorage.getItem('token') ? (
-        <a href="/" onClick={() => localStorage.clear()}>
+    </Nav.Item>
+    {localStorage.getItem('token') ? (
+      <Nav.Item>
+        <a className="nav-unactive" href="/" onClick={() => localStorage.clear()}>
           Wyloguj się
         </a>
-      ) : (
-        <NavLink to="/login-admin">
-          <div className="navbar__pill">Zaloguj się</div>
+      </Nav.Item>
+    ) : (
+      <Nav.Item>
+        <NavLink to="/login-admin" activeClassName="nav-active" className="nav-unactive">
+          Zaloguj się
         </NavLink>
-      )}
-    </div>
-  </nav>
+      </Nav.Item>
+    )}
+  </Nav>
 );
 
 export default Navbar;

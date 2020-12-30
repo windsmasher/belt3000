@@ -1,6 +1,6 @@
 import React from 'react';
 import './SuccessMessage.css';
 
-const SuccessMessage = props => <p className="success_message">{props.message}</p>;
+const SuccessMessage = props => <div className="success_message">{props.message}</div>;
 
 export default SuccessMessage;

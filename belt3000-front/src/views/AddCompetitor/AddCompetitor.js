@@ -2,12 +2,13 @@ import React from 'react';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import SuccessMessage from '../../components/SuccessMessage/SuccessMessage';
 import { Config } from '../../config/config';
+import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 
 class AddCompetitor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      competitor: { firstname: '', lastname: '', isAdult: false, belt: 'biały', stripes: '0' },
+      competitor: { firstname: '', lastname: '', isAdult: true, belt: 'biały', stripes: '0' },
       errorMsg: null,
       successMsg: null,
     };
@@ -17,10 +18,14 @@ class AddCompetitor extends React.Component {
     const name = event.target.name;
     const value = event.target.value;
     this.setState({ competitor: { ...this.state.competitor, [name]: value } });
+    console.log(this.state.competitor);
+    console.log(event.target.name);
+    console.log(event.target.value);
   };
 
-  handleCheckbox = event => {
-    this.setState({ competitor: { ...this.state.competitor, isAdult: event.target.checked } });
+  handleIsAdult = event => {
+    console.log(event.target.value);
+    this.setState({ competitor: { ...this.state.competitor, isAdult: Boolean(event.target.value) } });
   };
 
   handleSubmit = async event => {
@@ -44,78 +49,110 @@ class AddCompetitor extends React.Component {
 
   render() {
     return (
-      <div>
+      <Container>
         {this.state.errorMsg && <ErrorMessage message={this.state.errorMsg} />}
         {this.state.successMsg && <SuccessMessage message={this.state.successMsg} />}
-        Dodaj zawodnika
-        <form onSubmit={e => this.handleSubmit(e)}>
-          <label>
-            Imię:
-            <input
-              type="text"
-              name="firstname"
-              value={this.state.competitor.firstname}
-              onChange={e => this.handleChange(e)}
-            />
-          </label>
-          <label>
-            Nazwisko:
-            <input
-              type="text"
-              name="lastname"
-              value={this.state.competitor.lastname}
-              onChange={e => this.handleChange(e)}
-            />
-          </label>
-          <label>
-            Czy jest dorosły:
-            <input
-              type="checkbox"
-              name="isAdult"
-              onChange={e => this.handleCheckbox(e)}
-              checked={this.state.competitor.isAdult}
-            />
-          </label>
-          {this.state.competitor.isAdult === true ? (
-            <label>
-              Kolor pasa:
-              <select name="belt" id="belt" value={this.state.competitor.belt} onChange={e => this.handleChange(e)}>
-                <option value="biały">biały</option>
-                <option value="niebieski">niebieski</option>
-                <option value="purpurowy">purpurowy</option>
-                <option value="brązowy">brązowy</option>
-                <option value="czarny">czarny</option>
-              </select>
-            </label>
-          ) : (
-            <label>
-              Kolor pasa:
-              <select name="belt" id="belt" value={this.state.competitor.belt} onChange={e => this.handleChange(e)}>
-                <option value="biały">biały</option>
-                <option value="żółty">żółty</option>
-                <option value="pomarańczowy">pomarańczowy</option>
-                <option value="brązowy">brązowy</option>
-              </select>
-            </label>
-          )}
-          <label>
-            Ilość belek:
-            <select
-              name="stripes"
-              id="stripes"
-              value={this.state.competitor.stripes}
-              onChange={e => this.handleChange(e)}
-            >
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-            </select>
-          </label>
-          <input type="submit" value="Wyślij" />
-        </form>
-      </div>
+        <Form onSubmit={e => this.handleSubmit(e)}>
+          <Row>
+            <Col>
+              <Form.Group controlId="firstname">
+                <Form.Label>Imię</Form.Label>
+                <Form.Control
+                  name="firstname"
+                  defaultValue={this.state.competitor.firstname}
+                  onChange={this.handleChange}
+                  placeholder="Jan"
+                />
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Group controlId="lastname">
+                <Form.Label>Nazwisko</Form.Label>
+                <Form.Control
+                  name="lastname"
+                  defaultValue={this.state.competitor.lastname}
+                  onChange={this.handleChange}
+                  placeholder="Kowalski"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Form.Group controlId="isAdult">
+                <Form.Label>Grupa wiekowa</Form.Label>
+                <Form.Control
+                  as="select"
+                  name="isAdult"
+                  defaultValue={this.state.competitor.isAdult}
+                  onChange={this.handleIsAdult}
+                >
+                  <option value={false}>U18</option>
+                  <option value={true}>Senior</option>
+                </Form.Control>
+              </Form.Group>
+            </Col>
+            <Col>
+              {this.state.competitor.isAdult === true ? (
+                <Form.Group controlId="belt">
+                  <Form.Label>Kolor pasa</Form.Label>
+                  <Form.Control
+                    as="select"
+                    name="belt"
+                    defaultValue={this.state.competitor.belt}
+                    onChange={e => this.handleChange(e)}
+                  >
+                    <option value="biały">Biały</option>
+                    <option value="niebieski">Niebieski</option>
+                    <option value="purpurowy">Purpurowy</option>
+                    <option value="brązowy">Brązowy</option>
+                    <option value="czarny">Czarny</option>
+                  </Form.Control>
+                </Form.Group>
+              ) : (
+                <Form.Group controlId="belt">
+                  <Form.Label>Kolor pasa</Form.Label>
+                  <Form.Control
+                    as="select"
+                    name="belt"
+                    defaultValue={this.state.competitor.belt}
+                    onChange={e => this.handleChange(e)}
+                  >
+                    <option value="biały">Biały</option>
+                    <option value="żółty">Żółty</option>
+                    <option value="pomarańczowy">Pomarańczowy</option>
+                    <option value="zielony">Zielony</option>
+                  </Form.Control>
+                </Form.Group>
+              )}
+            </Col>
+            <Col>
+              <Form.Group controlId="stripes">
+                <Form.Label>Ilość belek</Form.Label>
+                <Form.Control
+                  as="select"
+                  name="stripes"
+                  defaultValue={this.state.competitor.stripes}
+                  onChange={e => this.handleChange(e)}
+                >
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                </Form.Control>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Button variant="outline-success" type="submit">
+                Dodaj zawodnika
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </Container>
     );
   }
 }

@@ -33,17 +33,23 @@
   }
 }
 
-label {
-  padding: 10px;
+.row {
+  margin: 10px;
 }
 
-input {
-  padding: 5px;
-  margin: 5px;
+.container-center {
+  display: flex;
+  justify-content: center;
+  margin: 10px;
 }
 
-select {
-  padding: 5px;
-  margin: 5px;
-  cursor: pointer;
+.container-spinner {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+}
+
+.btn-wide {
+  width: 300px;
+  height: 40px;
 }
