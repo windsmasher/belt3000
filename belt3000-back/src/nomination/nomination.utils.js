@@ -26,4 +26,33 @@ const higherBelt = (belt, isAdult) => {
   }
 };
 
+const lowerBelt = (belt, isAdult) => {
+  if (isAdult) {
+    switch (belt) {
+      case 'czarny':
+        return 'brązowy';
+      case 'brązowy':
+        return 'purpurowy';
+      case 'purpurowy':
+        return 'niebieski';
+      case 'niebieski':
+        return 'biały';
+      default:
+        return null;
+    }
+  } else {
+    switch (belt) {
+      case 'zielony':
+        return 'pomarańczowy';
+      case 'pomarańczowy':
+        return 'żółty';
+      case 'żółty':
+        return 'biały';
+      default:
+        return null;
+    }
+  }
+};
+
 module.exports = higherBelt;
+module.exports = lowerBelt;
