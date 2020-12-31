@@ -4,7 +4,7 @@ const Competitor = require('../competitor/competitor.model');
 const { validateAddNomination } = require('./addNomination.middleware');
 const higherBelt = require('./nomination.utils');
 
-router.post('/add/:competitorId', validateAddNomination, async (req, res) => {
+router.post('/add/:competitorId', validateAddNomination, async (req, res, next) => {
   if (!req || !req.params || !req.params.competitorId) {
     return res.status(400).json('Invalid param.');
   }
@@ -55,6 +55,22 @@ router.post('/add/:competitorId', validateAddNomination, async (req, res) => {
     return next(err);
   }
   return res.status(201).json(competitor);
+});
+
+router.get('/by-competitor/:competitorId', async (req, res, next) => {
+  if (!req || !req.params || !req.params.competitorId) {
+    return res.status(400).json('Invalid param.');
+  }
+
+  try {
+    const competitor = await Competitor.findById(req.params.competitorId);
+    if (!competitor) {
+      return res.status(500).json('No such object with this id.');
+    }
+    return res.status(200).json(competitor.nomination);
+  } catch (e) {
+    return next(e.toString());
+  }
 });
 
 module.exports = router;
