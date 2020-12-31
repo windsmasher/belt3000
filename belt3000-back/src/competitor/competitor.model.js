@@ -29,14 +29,21 @@ const CompetitorSchema = mongoose.Schema({
     type: [
       {
         date: Date,
-        newBelt: {
+        nomination: {
           type: String,
-          enum: ['niebieski', 'purpurowy', 'brązowy', 'czarny', 'żółty', 'pomarańczowy', 'zielony'],
-        },
-        numberOfStripesAdded: {
-          type: Number,
-          min: 0,
-          max: 4,
+          enum: [
+            'niebieski',
+            'purpurowy',
+            'brązowy',
+            'czarny',
+            'żółty',
+            'pomarańczowy',
+            'zielony',
+            '1 belka',
+            '2 belki',
+            '3 belki',
+            '4 belki',
+          ],
         },
         description: String,
       },
