@@ -71,9 +71,48 @@ router.get('/by-competitor/:competitorId', async (req, res, next) => {
     if (!competitor) {
       return res.status(500).json('No such object with this id.');
     }
-    return res.status(200).json(competitor.nomination);
+    return res.status(200).json(
+      competitor.nomination
+        .map(n => ({
+          id: n.id,
+          nomination: n.nomination,
+          description: n.description,
+          date: n.date,
+          person: `${competitor.firstname} ${competitor.lastname}`,
+        }))
+        .sort((a, b) => new Date(b.date) - new Date(a.date)),
+    );
   } catch (e) {
     return next(e.toString());
+  }
+});
+
+router.get('/all', async (req, res, next) => {
+  try {
+    const competitors = await Competitor.find({});
+    if (!competitors || competitors.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    return res.status(200).json(
+      competitors
+        .reduce(
+          (prev, curr) =>
+            prev.concat(
+              curr.nomination.map(n => ({
+                id: n.id,
+                nomination: n.nomination,
+                description: n.description,
+                date: n.date,
+                person: `${curr.firstname} ${curr.lastname}`,
+              })),
+            ),
+          [],
+        )
+        .sort((a, b) => new Date(b.date) - new Date(a.date)),
+    );
+  } catch (err) {
+    return next(err);
   }
 });
 
@@ -90,10 +129,20 @@ router.delete('/previous/:competitorId', async (req, res, next) => {
   if (nominationToDelete.nomination === 0) {
     const previousBelt = lowerBelt(nominationToDelete.nomination, competitor.isAdult);
     competitor.belt = previousBelt;
+    if (previousBelt === 'zielony') {
+      competitor.isAdult = false;
+    }
   } else {
+    competitor.stripes -= nominationToDelete.nomination;
   }
 
-  return res.json(nominationToDelete);
+  competitor.nomination = competitor.nomination.filter(nom => nom.id !== nominationToDelete.id);
+  try {
+    await competitor.save();
+  } catch (err) {
+    return next(err);
+  }
+  return res.status(200);
 });
 
 module.exports = router;
