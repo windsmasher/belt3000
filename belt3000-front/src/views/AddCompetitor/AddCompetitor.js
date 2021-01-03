@@ -14,22 +14,40 @@ class AddCompetitor extends React.Component {
     };
   }
 
+  componentDidMount = async () => {
+    console.log('props => ', this.props.match.params.id);
+    if (this.props && this.props.match && this.props.match.params && this.props.match.params.id) {
+      const response = await fetch(`${Config.API_URL}competitor/one/${this.props.match.params.id}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
+      });
+      const competitor = await response.json();
+      console.log('competitor ', competitor);
+      this.setState({
+        competitor: {
+          firstname: competitor.firstname,
+          lastname: competitor.lastname,
+          isAdult: competitor.isAdult,
+          belt: competitor.belt,
+          stripes: competitor.stripes,
+        },
+      });
+    }
+  };
+
   handleChange = event => {
     const name = event.target.name;
     const value = event.target.value;
     this.setState({ competitor: { ...this.state.competitor, [name]: value } });
-    console.log(this.state.competitor);
-    console.log(event.target.name);
-    console.log(event.target.value);
   };
 
   handleIsAdult = event => {
-    console.log(event.target.value);
     this.setState({ competitor: { ...this.state.competitor, isAdult: Boolean(event.target.value) } });
   };
 
   handleSubmit = async event => {
     event.preventDefault();
+    // link update or post
     try {
       const res = await fetch(`${Config.API_URL}competitor/add`, {
         method: 'POST',

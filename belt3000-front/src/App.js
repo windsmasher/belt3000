@@ -22,9 +22,7 @@ function App() {
             <Route path="/competitors">
               <Competitors />
             </Route>
-            <Route path="/add-competitor">
-              <AddCompetitor />{' '}
-            </Route>
+            <Route path="/add-competitor/:id?" component={AddCompetitor} />
             <Route path="/register-admin">
               <RegisterAdmin />{' '}
             </Route>

@@ -48,6 +48,8 @@ class Competitors extends React.Component {
     this.fetchAllCompetitors();
   };
 
+  handleUpdate = async id => {};
+
   render = () => {
     const competitorsList = this.state.competitors.map((comp, index) => (
       <tr>
@@ -57,6 +59,10 @@ class Competitors extends React.Component {
         <th>{Boolean(comp.isAdult) === true ? 'Dorosły' : 'U18'}</th>
         <th>{comp.belt}</th>
         <th>{comp.stripes}</th>
+        <th>
+          {' '}
+          <a href={`/add-competitor/${comp._id}`}>Edytuj</a>
+        </th>
         <th>
           {' '}
           <a href="#" onClick={() => this.handleDelete(comp._id)}>
@@ -87,6 +93,7 @@ class Competitors extends React.Component {
                   <th>Kategoria wiekowa</th>
                   <th>Kolor pasa</th>
                   <th>Ilość belek</th>
+                  <th>Edytuj zawodnika</th>
                   <th>Usuń zawodnika</th>
                 </tr>
               </thead>
