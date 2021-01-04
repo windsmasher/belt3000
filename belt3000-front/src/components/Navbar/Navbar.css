@@ -16,11 +16,8 @@
 
 .nav-unactive {
   padding: 5px;
-  border: 2px solid white;
-  border-radius: 3px;
 }
 
 .nav-active {
-  border: 2px solid black;
-  border-radius: 3px;
+  text-decoration: underline;
 }

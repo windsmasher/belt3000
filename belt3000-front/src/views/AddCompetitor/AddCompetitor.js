@@ -8,30 +8,37 @@ class AddCompetitor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      competitor: { firstname: '', lastname: '', isAdult: true, belt: 'biały', stripes: '0' },
+      competitor: { firstname: '', lastname: '', isAdult: 'true', belt: 'biały', stripes: '0' },
       errorMsg: null,
       successMsg: null,
+      isEdit: false,
     };
   }
 
   componentDidMount = async () => {
-    console.log('props => ', this.props.match.params.id);
     if (this.props && this.props.match && this.props.match.params && this.props.match.params.id) {
       const response = await fetch(`${Config.API_URL}competitor/one/${this.props.match.params.id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
       });
-      const competitor = await response.json();
-      console.log('competitor ', competitor);
+      const competitorJson = await response.json();
+
+      let competitor = {
+        firstname: competitorJson.firstname,
+        lastname: competitorJson.lastname,
+        isAdult: competitorJson.isAdult.toString(),
+        belt: competitorJson.belt,
+        stripes: competitorJson.stripes.toString(),
+      };
+
+      console.log(competitor);
+
       this.setState({
-        competitor: {
-          firstname: competitor.firstname,
-          lastname: competitor.lastname,
-          isAdult: competitor.isAdult,
-          belt: competitor.belt,
-          stripes: competitor.stripes,
-        },
+        competitor,
+        isEdit: true,
       });
+
+      console.log(this.state);
     }
   };
 
@@ -42,23 +49,37 @@ class AddCompetitor extends React.Component {
   };
 
   handleIsAdult = event => {
-    this.setState({ competitor: { ...this.state.competitor, isAdult: Boolean(event.target.value) } });
+    let competitor = this.state.competitor;
+    competitor.isAdult = event.target.value;
+    this.setState({ competitor });
+    console.log(this.state.competitor);
   };
 
   handleSubmit = async event => {
     event.preventDefault();
-    // link update or post
     try {
-      const res = await fetch(`${Config.API_URL}competitor/add`, {
-        method: 'POST',
-        body: JSON.stringify(this.state.competitor),
-        headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
-      });
+      let competitor = this.state.competitor;
+      competitor.isAdult = competitor.isAdult === 'true' ? true : false;
+
+      const res = this.state.isEdit
+        ? await fetch(`${Config.API_URL}competitor/${this.props.match.params.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify(competitor),
+            headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
+          })
+        : await fetch(`${Config.API_URL}competitor/add`, {
+            method: 'POST',
+            body: JSON.stringify(competitor),
+            headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
+          });
 
       if (res.status !== 201) {
         this.setState({ errorMsg: 'Wystąpił błąd. Niepoprawne dane.', successMsg: null });
       } else {
-        this.setState({ successMsg: 'Poprawnie dodano zawodnika.', errorMsg: null });
+        this.setState({
+          successMsg: this.state.isEdit ? 'Poprawnie zaktualizowano zawodnika.' : 'Poprawnie dodano zawodnika.',
+          errorMsg: null,
+        });
       }
     } catch (err) {
       this.setState({ errorMsg: 'Wystąpił błąd.' });
@@ -111,7 +132,7 @@ class AddCompetitor extends React.Component {
               </Form.Group>
             </Col>
             <Col>
-              {this.state.competitor.isAdult === true ? (
+              {this.state.competitor.isAdult === 'true' ? (
                 <Form.Group controlId="belt">
                   <Form.Label>Kolor pasa</Form.Label>
                   <Form.Control
