@@ -16,22 +16,12 @@ function App() {
         <ErrorBoundary>
           <Navbar />
           <Switch>
-            <Route path="/nominations">
-              <Nominations />
-            </Route>
-            <Route path="/competitors">
-              <Competitors />
-            </Route>
-            <Route path="/add-competitor/:id?" component={AddCompetitor} />
-            <Route path="/register-admin">
-              <RegisterAdmin />{' '}
-            </Route>
-            <Route path="/login-admin">
-              <Login />{' '}
-            </Route>
-            <Route exact path="/">
-              <Home />
-            </Route>
+            <Route path="/nominations" component={Nominations} />
+            <Route path="/competitors" component={Competitors} />
+            <Route path="/add-competitor/:competitorId?" component={AddCompetitor} />
+            <Route path="/register-admin" component={RegisterAdmin} />
+            <Route path="/login-admin" component={Login} />
+            <Route exact path="/" component={Home} />
           </Switch>
         </ErrorBoundary>
       </div>
