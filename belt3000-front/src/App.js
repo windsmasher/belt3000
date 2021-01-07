@@ -7,6 +7,7 @@ import Navbar from './components/Navbar/Navbar';
 import AddCompetitor from './views/AddCompetitor/AddCompetitor';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import RegisterAdmin from './views/Register/Register';
+import AddNomination from './views/AddNomination/AddNomination';
 import Login from './views/Login/Login';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
             <Route path="/add-competitor/:competitorId?" component={AddCompetitor} />
             <Route path="/register-admin" component={RegisterAdmin} />
             <Route path="/login-admin" component={Login} />
+            <Route path="/add-nomination/:competitorId" component={AddNomination} />
             <Route exact path="/" component={Home} />
           </Switch>
         </ErrorBoundary>
