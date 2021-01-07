@@ -17,29 +17,25 @@ const AddCompetitor = () => {
   const [successMsg, setSuccessMsg] = useState(null);
   const { competitorId } = useParams();
 
-  useEffect(() => {
+  useEffect(async () => {
     if (competitorId) {
-      fetchCompetitor();
+      const response = await fetch(`${Config.API_URL}competitor/one/${competitorId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
+      });
+      const competitorJson = await response.json();
+
+      let competitorTemp = {
+        firstname: competitorJson.firstname,
+        lastname: competitorJson.lastname,
+        isAdult: competitorJson.isAdult.toString(),
+        belt: competitorJson.belt,
+        stripes: competitorJson.stripes.toString(),
+      };
+
+      setCompetitor(competitorTemp);
     }
   }, [competitorId]);
-
-  const fetchCompetitor = async () => {
-    const response = await fetch(`${Config.API_URL}competitor/one/${competitorId}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
-    });
-    const competitorJson = await response.json();
-
-    let competitorTemp = {
-      firstname: competitorJson.firstname,
-      lastname: competitorJson.lastname,
-      isAdult: competitorJson.isAdult.toString(),
-      belt: competitorJson.belt,
-      stripes: competitorJson.stripes.toString(),
-    };
-
-    setCompetitor(competitorTemp);
-  };
 
   const handleSubmit = async event => {
     event.preventDefault();
@@ -59,7 +55,7 @@ const AddCompetitor = () => {
             headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
           });
 
-      if (res.status !== 201) {
+      if (res.status !== (competitorId ? 200 : 201)) {
         setErrorMsg('Wystąpił błąd. Niepoprawne dane.');
         setSuccessMsg(null);
       } else {
@@ -107,7 +103,7 @@ const AddCompetitor = () => {
               <Form.Control
                 as="select"
                 name="isAdult"
-                defaultValue={competitor.isAdult}
+                value={competitor.isAdult}
                 onChange={e => setCompetitor({ ...competitor, isAdult: e.target.value })}
               >
                 <option value={false}>U18</option>
@@ -122,7 +118,7 @@ const AddCompetitor = () => {
                 <Form.Control
                   as="select"
                   name="belt"
-                  defaultValue={competitor.belt}
+                  value={competitor.belt}
                   onChange={e => setCompetitor({ ...competitor, belt: e.target.value })}
                 >
                   <option value="biały">Biały</option>
@@ -138,7 +134,7 @@ const AddCompetitor = () => {
                 <Form.Control
                   as="select"
                   name="belt"
-                  defaultValue={competitor.belt}
+                  value={competitor.belt}
                   onChange={e => setCompetitor({ ...competitor, belt: e.target.value })}
                 >
                   <option value="biały">Biały</option>
@@ -155,7 +151,7 @@ const AddCompetitor = () => {
               <Form.Control
                 as="select"
                 name="stripes"
-                defaultValue={competitor.stripes}
+                value={competitor.stripes}
                 onChange={e => setCompetitor({ ...competitor, stripes: e.target.value })}
               >
                 <option value="0">0</option>

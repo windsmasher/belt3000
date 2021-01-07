@@ -1,13 +1,14 @@
 import React from 'react';
 import { Config } from '../../config/config';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
-import { Table, Spinner, Form } from 'react-bootstrap';
+import { Table, Spinner, Form, Button } from 'react-bootstrap';
 class Nominations extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       nominations: [],
       competitors: [],
+      selectedCompetitor: 'all',
       nominationsDownloaded: false,
       errorListFetch: false,
     };
@@ -51,11 +52,13 @@ class Nominations extends React.Component {
   };
 
   handleNominationPerson = async event => {
+    this.setState({ selectedCompetitor: event.target.value });
     if (event.target.value === 'all') {
       await this.fetchAllNominations();
     } else {
       await this.fetchNominationsByCompetitor(event.target.value);
     }
+    console.log(this.state);
   };
 
   componentDidMount = async () => {
@@ -76,10 +79,26 @@ class Nominations extends React.Component {
     return (
       <div>
         {this.state.errorListFetch && <ErrorMessage message={'Błąd pobrania listy nominacji.'} />}
+        {this.state.selectedCompetitor === 'all' ? (
+          <div></div>
+        ) : (
+          <div className="container-center">
+            <a href="/add-nomination/">
+              <Button className="btn-wide" variant="outline-info">
+                Dodaj nominacje
+              </Button>
+            </a>
+          </div>
+        )}
         <Form>
           <Form.Group>
             <Form.Label>Osobowa nominowana</Form.Label>
-            <Form.Control as="select" name="person" defaultValue={null} onChange={this.handleNominationPerson}>
+            <Form.Control
+              as="select"
+              name="person"
+              value={this.state.selectedCompetitor}
+              onChange={this.handleNominationPerson}
+            >
               <option value="all">Wszystkie</option>
               {this.state.competitors.map(person => (
                 <option key={person._id} value={person._id}>
