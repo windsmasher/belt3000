@@ -46,6 +46,10 @@ const CompetitorSchema = mongoose.Schema({
           ],
         },
         description: String,
+        type: {
+          type: Number,
+          enum: [0, 1, 2, 3, 4],
+        },
       },
     ],
   },

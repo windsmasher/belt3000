@@ -36,6 +36,7 @@ router.post('/add/:competitorId', validateAddNomination, async (req, res, next) 
       date,
       description,
       nomination: newBelt,
+      type: nominationType,
     });
   } else {
     competitor.stripes += nominationType;
@@ -53,6 +54,7 @@ router.post('/add/:competitorId', validateAddNomination, async (req, res, next) 
           : nominationType === 3
           ? '3 Belki'
           : '4 belki',
+      type: nominationType,
     });
   }
 
@@ -128,15 +130,17 @@ router.delete('/previous/:competitorId', async (req, res, next) => {
   const nominationToDelete = competitor.nomination.sort((a, b) => {
     return new Date(b.date) - new Date(a.date);
   })[0];
-
-  if (nominationToDelete.nomination === 0) {
+  console.log(nominationToDelete);
+  if (nominationToDelete.type === 0) {
     const previousBelt = utils.lowerBelt(nominationToDelete.nomination, competitor.isAdult);
     competitor.belt = previousBelt;
     if (previousBelt === 'zielony') {
       competitor.isAdult = false;
     }
   } else {
-    competitor.stripes -= nominationToDelete.nomination;
+    console.log('stripes', competitor.stripes);
+    console.log('nom typ', nominationToDelete.nomination);
+    competitor.stripes -= Number(nominationToDelete.type);
   }
 
   competitor.nomination = competitor.nomination.filter(nom => nom.id !== nominationToDelete.id);
@@ -145,7 +149,7 @@ router.delete('/previous/:competitorId', async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
-  return res.status(200);
+  return res.status(200).json();
 });
 
 module.exports = router;

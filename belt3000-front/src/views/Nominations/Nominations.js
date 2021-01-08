@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Config } from '../../config/config';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
+import SuccessMessage from '../../components/SuccessMessage/SuccessMessage';
 import { Table, Spinner, Form, Button } from 'react-bootstrap';
 
 const Nominations = () => {
@@ -8,9 +9,12 @@ const Nominations = () => {
   const [competitors, setCompetitors] = useState([]);
   const [selectedCompetitor, setSelectedCompetitor] = useState('all');
   const [nominationsDownloaded, setNominationsDownloaded] = useState(false);
-  const [errorListFetch, setErrorListFetch] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
+    setError('');
+    setSuccess('');
     fetchAllNominations();
     fetchAllCompetitors();
   }, []);
@@ -22,7 +26,9 @@ const Nominations = () => {
       });
       const competitors = await response.json();
       setCompetitors(competitors);
+      setError('');
     } catch (err) {
+      setError('Błąd pobrania listy zawodników.');
       console.log(`Competitors fetch error: ${err}`);
     }
   };
@@ -35,8 +41,10 @@ const Nominations = () => {
       const nominations = await response.json();
       setNominations(nominations);
       setNominationsDownloaded(true);
+      setError('');
     } catch (err) {
-      setErrorListFetch(true);
+      setSuccess('');
+      setError('Błąd pobrania listy nominacji.');
     }
   };
 
@@ -47,12 +55,16 @@ const Nominations = () => {
       });
       const nominationsByCompetitor = await response.json();
       setNominations(nominationsByCompetitor);
+      setError('');
     } catch (err) {
-      setErrorListFetch(true);
+      setSuccess('');
+      setError('Błąd pobrania listy nominacji.');
     }
   };
 
   const handleNominationPerson = async event => {
+    setError('');
+    setSuccess('');
     setSelectedCompetitor(event.target.value);
     if (event.target.value === 'all') {
       await fetchAllNominations();
@@ -63,13 +75,20 @@ const Nominations = () => {
 
   const deletePreviousNomination = async () => {
     try {
-      const response = await fetch(`${Config.API_URL}nomination/previous/${selectedCompetitor}`, {
+      const res = await fetch(`${Config.API_URL}nomination/previous/${selectedCompetitor}`, {
         method: 'DELETE',
         headers: { authorization: localStorage.getItem('token') },
       });
-      console.log(response.status);
+      if (res.status === 200) {
+        setSuccess('Poprawnie usunięto ostatnią nominacje.');
+        setError('');
+      } else {
+        setSuccess('');
+        setError('Błąd usunięcia ostatniej nominacji.');
+      }
     } catch (err) {
-      setErrorListFetch(true);
+      setSuccess('');
+      setError('Błąd usunięcia ostatniej nominacji.');
     }
   };
 
@@ -85,7 +104,8 @@ const Nominations = () => {
 
   return (
     <div>
-      {errorListFetch && <ErrorMessage message={'Błąd pobrania listy nominacji.'} />}
+      {error && <ErrorMessage message={error} />}
+      {success && <SuccessMessage message={success} />}
       {selectedCompetitor === 'all' ? (
         <div></div>
       ) : (
@@ -97,7 +117,7 @@ const Nominations = () => {
           </a>
         </div>
       )}
-      {selectedCompetitor === 'all' ? (
+      {selectedCompetitor === 'all' || competitors.length === 0 ? (
         <div></div>
       ) : (
         <div className="container-center">

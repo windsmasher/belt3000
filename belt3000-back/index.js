@@ -44,5 +44,5 @@ app.get('/checkToken', withAuth, (req, res) => {
   res.sendStatus(200);
 });
 
-const PORT = 3001;
+const PORT = 5001;
 app.listen(PORT, () => console.log('Server started on port ' + PORT));
