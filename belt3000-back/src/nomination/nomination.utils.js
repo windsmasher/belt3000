@@ -1,4 +1,6 @@
 const higherBelt = (belt, isAdult) => {
+  console.log('1', belt);
+  console.log('2', isAdult);
   if (isAdult === true) {
     switch (belt) {
       case 'biały':
@@ -54,5 +56,4 @@ const lowerBelt = (belt, isAdult) => {
   }
 };
 
-module.exports = higherBelt;
-module.exports = lowerBelt;
+module.exports = { higherBelt, lowerBelt };

@@ -13,8 +13,7 @@ const Nominations = () => {
   useEffect(() => {
     fetchAllNominations();
     fetchAllCompetitors();
-    return;
-  });
+  }, []);
 
   const fetchAllCompetitors = async () => {
     try {
@@ -62,12 +61,24 @@ const Nominations = () => {
     }
   };
 
+  const deletePreviousNomination = async () => {
+    try {
+      const response = await fetch(`${Config.API_URL}nomination/previous/${selectedCompetitor}`, {
+        method: 'DELETE',
+        headers: { authorization: localStorage.getItem('token') },
+      });
+      console.log(response.status);
+    } catch (err) {
+      setErrorListFetch(true);
+    }
+  };
+
   const nominationList = nominations.map((nom, index) => (
     <tr>
       <th>{index + 1}</th>
       <th>{nom.person}</th>
       <th>{nom.nomination}</th>
-      <th>{nom.date}</th>
+      <th>{new Date(nom.date).toLocaleDateString()}</th>
       <th>{nom.description}</th>
     </tr>
   ));
@@ -84,6 +95,15 @@ const Nominations = () => {
               Dodaj nominacje
             </Button>
           </a>
+        </div>
+      )}
+      {selectedCompetitor === 'all' ? (
+        <div></div>
+      ) : (
+        <div className="container-center">
+          <Button className="btn-wide" variant="outline-info" onClick={deletePreviousNomination}>
+            Usuń ostatnią nominacje
+          </Button>
         </div>
       )}
       <Form>

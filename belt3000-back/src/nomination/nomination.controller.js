@@ -2,8 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Competitor = require('../competitor/competitor.model');
 const { validateAddNomination } = require('./addNomination.middleware');
-const higherBelt = require('./nomination.utils');
-const lowerBelt = require('./nomination.utils');
+const utils = require('./nomination.utils');
 
 router.post('/add/:competitorId', validateAddNomination, async (req, res, next) => {
   if (!req || !req.params || !req.params.competitorId) {
@@ -20,10 +19,14 @@ router.post('/add/:competitorId', validateAddNomination, async (req, res, next) 
     return res.status(500).json('No such object with this id.');
   }
 
-  const { date, nominationType, description } = req.body;
+  const { date, description } = req.body;
+  const nominationType = Number(req.body.nominationType);
 
   if (nominationType === 0) {
-    const newBelt = higherBelt(competitor.belt, competitor.isAdult);
+    console.log(`to higer belt: ${competitor.belt} and ${competitor.isAdult}`);
+    const newBelt = utils.higherBelt(competitor.belt.replace(' ', ''), competitor.isAdult);
+    console.log('higer belt: ', newBelt);
+
     if (competitor.belt === 'zielony') {
       competitor.isAdult = true;
     }
@@ -127,7 +130,7 @@ router.delete('/previous/:competitorId', async (req, res, next) => {
   })[0];
 
   if (nominationToDelete.nomination === 0) {
-    const previousBelt = lowerBelt(nominationToDelete.nomination, competitor.isAdult);
+    const previousBelt = utils.lowerBelt(nominationToDelete.nomination, competitor.isAdult);
     competitor.belt = previousBelt;
     if (previousBelt === 'zielony') {
       competitor.isAdult = false;

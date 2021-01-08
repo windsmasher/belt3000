@@ -6,13 +6,14 @@ import { useParams } from 'react-router';
 import { Config } from '../../config/config';
 
 const AddNomination = () => {
-  const [nomination, setNomination] = useState({ date: new Date(), nominationType: null, description: null });
+  const [nomination, setNomination] = useState({ date: new Date(), nominationType: 0, description: null });
   const [errorMsg, setErrorMsg] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
   const { competitorId } = useParams();
 
   const handleSubmit = async e => {
     e.preventDefault();
+    console.log(nomination);
     try {
       const res = await fetch(`${Config.API_URL}nomination/add/${competitorId}`, {
         method: 'POST',
@@ -23,7 +24,7 @@ const AddNomination = () => {
         setErrorMsg('Wystąpił błąd. Niepoprawne dane.');
         setSuccessMsg(null);
       } else {
-        setSuccessMsg(competitorId ? 'Poprawnie zaktualizowano zawodnika.' : 'Poprawnie dodano zawodnika.');
+        setSuccessMsg('Poprawnie dodano nominacje.');
         setErrorMsg(null);
       }
     } catch (e) {
@@ -41,7 +42,7 @@ const AddNomination = () => {
             <Form.Group controlId="date">
               <Form.Label>Data</Form.Label>
               <Form.Control
-                as="date"
+                type="date"
                 name="date"
                 value={nomination.date}
                 onChange={e => setNomination({ ...nomination, date: e.target.value })}
@@ -55,7 +56,7 @@ const AddNomination = () => {
                 as="select"
                 name="nominationType"
                 value={nomination.nominationType}
-                onChange={e => setNomination({ ...nomination, nominationType: e.target.value })}
+                onChange={e => setNomination({ ...nomination, nominationType: Number(e.target.value) })}
               >
                 <option value={0}>Pas</option>
                 <option value={1}>1 belka</option>
