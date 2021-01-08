@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import SuccessMessage from '../../components/SuccessMessage/SuccessMessage';
 import { useParams } from 'react-router';
 import { Config } from '../../config/config';
+import { AuthContext } from '../../context';
 
 const AddNomination = () => {
   const [nomination, setNomination] = useState({ date: new Date(), nominationType: 0, description: null });
   const [errorMsg, setErrorMsg] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
   const { competitorId } = useParams();
+  const authContext = useContext(AuthContext);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -18,7 +20,7 @@ const AddNomination = () => {
       const res = await fetch(`${Config.API_URL}nomination/add/${competitorId}`, {
         method: 'POST',
         body: JSON.stringify(nomination),
-        headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
+        headers: { 'Content-Type': 'application/json', authorization: authContext.token },
       });
       if (res.status !== 201) {
         setErrorMsg('Wystąpił błąd. Niepoprawne dane.');

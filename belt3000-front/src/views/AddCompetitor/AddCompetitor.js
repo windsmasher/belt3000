@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import SuccessMessage from '../../components/SuccessMessage/SuccessMessage';
 import { Config } from '../../config/config';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { useParams } from 'react-router';
+import { AuthContext } from '../../context';
 
 const AddCompetitor = () => {
   const [competitor, setCompetitor] = useState({
@@ -16,12 +17,13 @@ const AddCompetitor = () => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
   const { competitorId } = useParams();
+  const authContext = useContext(AuthContext);
 
   useEffect(async () => {
     if (competitorId) {
       const response = await fetch(`${Config.API_URL}competitor/one/${competitorId}`, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
+        headers: { 'Content-Type': 'application/json', authorization: authContext.token },
       });
       const competitorJson = await response.json();
 
@@ -47,12 +49,12 @@ const AddCompetitor = () => {
         ? await fetch(`${Config.API_URL}competitor/${competitorId}`, {
             method: 'PATCH',
             body: JSON.stringify(competitorTemp),
-            headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
+            headers: { 'Content-Type': 'application/json', authorization: authContext.token },
           })
         : await fetch(`${Config.API_URL}competitor/add`, {
             method: 'POST',
             body: JSON.stringify(competitorTemp),
-            headers: { 'Content-Type': 'application/json', authorization: localStorage.getItem('token') },
+            headers: { 'Content-Type': 'application/json', authorization: authContext.token },
           });
 
       if (res.status !== (competitorId ? 200 : 201)) {

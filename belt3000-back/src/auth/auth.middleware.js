@@ -3,8 +3,6 @@ require('dotenv').config();
 
 const withAuth = function (req, res, next) {
   const token = req.headers.authorization;
-  console.log('token => ', req.headers.authorization);
-  console.log('body => ', req.body);
   if (!token) {
     res.status(401).send('Unauthorized: No token provided');
   } else {

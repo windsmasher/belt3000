@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Config } from '../../config/config';
 import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import SuccessMessage from '../../components/SuccessMessage/SuccessMessage';
 import { Table, Spinner, Form, Button } from 'react-bootstrap';
+import { AuthContext } from '../../context';
 
 const Nominations = () => {
   const [nominations, setNominations] = useState([]);
@@ -11,6 +12,7 @@ const Nominations = () => {
   const [nominationsDownloaded, setNominationsDownloaded] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const authContext = useContext(AuthContext);
 
   useEffect(() => {
     setError('');
@@ -22,7 +24,7 @@ const Nominations = () => {
   const fetchAllCompetitors = async () => {
     try {
       const response = await fetch(`${Config.API_URL}competitor/all`, {
-        headers: { authorization: localStorage.getItem('token') },
+        headers: { authorization: authContext.token },
       });
       const competitors = await response.json();
       setCompetitors(competitors);
@@ -90,6 +92,7 @@ const Nominations = () => {
       setSuccess('');
       setError('Błąd usunięcia ostatniej nominacji.');
     }
+    fetchAllNominations();
   };
 
   const nominationList = nominations.map((nom, index) => (
