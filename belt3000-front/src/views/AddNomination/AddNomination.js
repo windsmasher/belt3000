@@ -1,17 +1,15 @@
 import React, { useState, useContext } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
-import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
-import SuccessMessage from '../../components/SuccessMessage/SuccessMessage';
 import { useParams } from 'react-router';
 import { Config } from '../../config/config';
 import { AuthContext } from '../../context';
+import { useToast } from '@chakra-ui/react';
 
 const AddNomination = () => {
   const [nomination, setNomination] = useState({ date: new Date(), nominationType: 0, description: null });
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [successMsg, setSuccessMsg] = useState(null);
   const { competitorId } = useParams();
   const authContext = useContext(AuthContext);
+  const toast = useToast();
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -23,21 +21,32 @@ const AddNomination = () => {
         headers: { 'Content-Type': 'application/json', authorization: authContext.token },
       });
       if (res.status !== 201) {
-        setErrorMsg('Wystąpił błąd. Niepoprawne dane.');
-        setSuccessMsg(null);
+        toast({
+          title: 'Wystąpił błąd. Niepoprawne dane.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
       } else {
-        setSuccessMsg('Poprawnie dodano nominacje.');
-        setErrorMsg(null);
+        toast({
+          title: 'Poprawnie dodano nominacje.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
       }
     } catch (e) {
-      setErrorMsg('Wystąpił błąd.');
+      toast({
+        title: 'Wystąpił błąd.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
   return (
     <Container>
-      {errorMsg && <ErrorMessage message={errorMsg} />}
-      {successMsg && <SuccessMessage message={successMsg} />}
       <Form onSubmit={e => handleSubmit(e)}>
         <Row>
           <Col>

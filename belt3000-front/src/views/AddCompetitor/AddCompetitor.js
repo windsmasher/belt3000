@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
-import SuccessMessage from '../../components/SuccessMessage/SuccessMessage';
 import { Config } from '../../config/config';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { AuthContext } from '../../context';
+import { useToast } from '@chakra-ui/react';
 
 const AddCompetitor = () => {
   const [competitor, setCompetitor] = useState({
@@ -14,10 +13,9 @@ const AddCompetitor = () => {
     belt: 'biały',
     stripes: '0',
   });
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [successMsg, setSuccessMsg] = useState(null);
   const { competitorId } = useParams();
   const authContext = useContext(AuthContext);
+  const toast = useToast();
 
   useEffect(async () => {
     if (competitorId) {
@@ -58,21 +56,32 @@ const AddCompetitor = () => {
           });
 
       if (res.status !== (competitorId ? 200 : 201)) {
-        setErrorMsg('Wystąpił błąd. Niepoprawne dane.');
-        setSuccessMsg(null);
+        toast({
+          title: 'Wystąpił błąd. Niepoprawne dane.',
+          status: 'error',
+          isClosable: true,
+          duration: 3000,
+        });
       } else {
-        setSuccessMsg(competitorId ? 'Poprawnie zaktualizowano zawodnika.' : 'Poprawnie dodano zawodnika.');
-        setErrorMsg(null);
+        toast({
+          title: competitorId ? 'Poprawnie zaktualizowano zawodnika.' : 'Poprawnie dodano zawodnika.',
+          status: 'success',
+          isClosable: true,
+          duration: 3000,
+        });
       }
     } catch (err) {
-      setErrorMsg('Wystąpił błąd.');
+      toast({
+        title: 'Wystąpił błąd.',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
     }
   };
 
   return (
     <Container>
-      {errorMsg && <ErrorMessage message={errorMsg} />}
-      {successMsg && <SuccessMessage message={successMsg} />}
       <Form onSubmit={e => handleSubmit(e)}>
         <Row>
           <Col>

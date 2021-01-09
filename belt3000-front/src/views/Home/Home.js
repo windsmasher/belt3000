@@ -2,11 +2,12 @@ import { Container, Row } from 'react-bootstrap';
 import React, { useState, useEffect, useContext } from 'react';
 import { Config } from '../../config/config';
 import { AuthContext } from '../../context';
-import Login from '../Login/Login';
+import { useToast } from '@chakra-ui/react';
 
 const Home = () => {
   const [competitors, setCompetitors] = useState([]);
   const authContext = useContext(AuthContext);
+  const toast = useToast();
 
   useEffect(() => {
     fetchAllCompetitors();
@@ -21,6 +22,12 @@ const Home = () => {
       const competitors = await response.json();
       setCompetitors(competitors);
     } catch (err) {
+      toast({
+        title: 'Wystąpił błąd.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
       console.log(`Competitors fetch error: ${err}`);
     }
   };

@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
-import SuccessMessage from '../../components/SuccessMessage/SuccessMessage';
 import { Config } from '../../config/config';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { useToast } from '@chakra-ui/react';
 
 const RegisterAdmin = () => {
   const [registerData, setRegisterData] = useState({ firstname: '', lastname: '', password: '', email: '' });
-  const [errorMsg, setErrorMsg] = useState('');
-  const [successMsg, setSuccessMsg] = useState('');
+  const toast = useToast();
 
   const handleChange = event => {
     const name = event.target.name;
@@ -26,23 +24,36 @@ const RegisterAdmin = () => {
         },
       });
       if (res.status !== 201) {
-        setSuccessMsg('');
-        setErrorMsg('Wystąpił błąd. Niepoprawne dane.');
+        toast({
+          title: 'Wystąpił błąd. Niepoprawne dane.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
       } else {
-        setSuccessMsg('Poprawnie zarejestrowano.');
-        setErrorMsg('');
+        toast({
+          title: 'Poprawnie zarejestrowano.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        });
       }
     } catch (e) {
-      setSuccessMsg('');
-      setErrorMsg('Wystąpił błąd.');
+      toast({
+        title: 'Wystąpił błąd.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
   return (
     <Container>
-      {errorMsg && <ErrorMessage message={errorMsg} />}
-      {successMsg && <SuccessMessage message={successMsg} />}
       <Form onSubmit={handleSubmit}>
+        <Row>
+          <a href="/login-admin">Zaloguj</a>
+        </Row>
         <Row>
           <Col>
             <Form.Group controlId="email">

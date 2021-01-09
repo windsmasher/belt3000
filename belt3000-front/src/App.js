@@ -11,6 +11,9 @@ import RegisterAdmin from './views/Register/Register';
 import AddNomination from './views/AddNomination/AddNomination';
 import Login from './views/Login/Login';
 import { AuthContext } from './context';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import { ChakraProvider } from '@chakra-ui/react';
+import Header from './components/Header/Header';
 
 let logoutTimer;
 
@@ -53,38 +56,36 @@ const App = () => {
   }, [token, logout, tokenExpirationDate]);
 
   return (
-    <AuthContext.Provider
-      value={{
-        isLoggedIn: !!token,
-        token: token,
-        login: login,
-        logout: logout,
-      }}
-    >
-      <Router>
-        <div>
-          <ErrorBoundary>
-            {!!token ? (
+    <ChakraProvider>
+      <AuthContext.Provider
+        value={{
+          isLoggedIn: !!token,
+          token: token,
+          login: login,
+          logout: logout,
+        }}
+      >
+        <Router>
+          <div>
+            <ErrorBoundary>
               <div>
-                <Navbar />
+                <Header />
+                {!!token ? <Navbar /> : null}
                 <Switch>
-                  <Route path="/nominations" component={Nominations} />
-                  <Route path="/competitors" component={Competitors} />
-                  <Route path="/add-competitor/:competitorId?" component={AddCompetitor} />
-                  <Route path="/add-nomination/:competitorId" component={AddNomination} />
-                  <Route exact path="/" component={Home} />
+                  <PrivateRoute path="/nominations" component={Nominations} />
+                  <PrivateRoute path="/competitors" component={Competitors} />
+                  <PrivateRoute path="/add-competitor/:competitorId?" component={AddCompetitor} />
+                  <PrivateRoute path="/add-nomination/:competitorId" component={AddNomination} />
+                  <PrivateRoute exact path="/" component={Home} />
+                  <Route path="/login-admin" component={Login} />
+                  <Route path="/register-admin" component={RegisterAdmin} />
                 </Switch>
               </div>
-            ) : (
-              <Switch>
-                <Route path="/login-admin" component={Login} />
-                <Route path="/register-admin" component={RegisterAdmin} />
-              </Switch>
-            )}
-          </ErrorBoundary>
-        </div>
-      </Router>
-    </AuthContext.Provider>
+            </ErrorBoundary>
+          </div>
+        </Router>
+      </AuthContext.Provider>
+    </ChakraProvider>
   );
 };
 

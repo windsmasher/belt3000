@@ -3,14 +3,14 @@ import { Config } from '../../config/config';
 import { withRouter } from 'react-router-dom';
 import { NavLink, useHistory } from 'react-router-dom';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
-import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import { AuthContext } from '../../context';
+import { useToast } from '@chakra-ui/react';
 
 const Login = () => {
   const authContext = useContext(AuthContext);
   const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const [errorLogin, setErrorLogin] = useState(false);
   const history = useHistory();
+  const toast = useToast();
 
   const handleInputChange = event => {
     const { value, name } = event.target;
@@ -30,17 +30,25 @@ const Login = () => {
         authContext.login(data.token);
         history.push('/');
       } else {
-        setErrorLogin(true);
+        toast({
+          title: 'Wystąpił błąd.',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
       }
     } catch (e) {
-      console.log('ee', e);
-      setErrorLogin(true);
+      toast({
+        title: 'Wystąpił błąd.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
   return (
     <Container>
-      {errorLogin && <ErrorMessage message={'Błąd logowania.'} />}
       <Row>
         <Col>
           <Form onSubmit={onSubmit}>
