@@ -3,7 +3,7 @@ import { Config } from '../config/config';
 import { useParams } from 'react-router';
 import { AuthContext } from '../context';
 import { useToast, Box, FormLabel, FormControl, Input, Stack, Select } from '@chakra-ui/react';
-import SuccessButton from '../components/SuccessButton';
+import ButtonComponent from '../components/ButtonComponent';
 import Subtitle from '../components/Subtitle';
 
 const AddCompetitor = () => {
@@ -181,7 +181,7 @@ const AddCompetitor = () => {
           </FormControl>
         </Box>
       </Stack>
-      <SuccessButton msg={competitorId ? 'Aktualizuj' : 'Dodaj'} onClick={handleSubmit} />
+      <ButtonComponent msg={competitorId ? 'Aktualizuj' : 'Dodaj'} onClick={handleSubmit} type="success" />
     </Box>
   );
 };

@@ -4,7 +4,7 @@ import { Config } from '../config/config';
 import { AuthContext } from '../context';
 import { useToast, Box, Stack, FormLabel, FormControl, Input, Select } from '@chakra-ui/react';
 import Subtitle from '../components/Subtitle';
-import SuccessButton from '../components/SuccessButton';
+import ButtonComponent from '../components/ButtonComponent';
 
 const AddNomination = () => {
   const [nomination, setNomination] = useState({ date: new Date(), nominationType: 0, description: null });
@@ -93,7 +93,7 @@ const AddNomination = () => {
           />
         </FormControl>
       </Box>
-      <SuccessButton msg="Dodaj" onClick={handleSubmit} />
+      <ButtonComponent type="success" msg="Dodaj" onClick={handleSubmit} />
     </Box>
   );
 };

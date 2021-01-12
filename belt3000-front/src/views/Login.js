@@ -16,7 +16,7 @@ import {
   FormControl,
   Text,
 } from '@chakra-ui/react';
-import CommonButton from '../components/CommonButton';
+import ButtonComponent from '../components/ButtonComponent';
 import Subtitle from '../components/Subtitle';
 
 const Login = () => {
@@ -103,7 +103,7 @@ const Login = () => {
         </FormControl>
       </Stack>
       <Box mt={5}>
-        <CommonButton msg="Zaloguj" onClick={onSubmit} />
+        <ButtonComponent msg="Zaloguj" onClick={onSubmit} type="success" />
         <Link as={NavLink} to="/register-admin">
           <Box mt={5} textAlign="center">
             <Text>Nie masz konta? Zarejestruj się.</Text>

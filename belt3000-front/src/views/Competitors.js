@@ -4,7 +4,7 @@ import { AuthContext } from '../context';
 import { useHistory, NavLink } from 'react-router-dom';
 import { Table, Thead, Tbody, Tr, Th, Td, useToast, Stack, Box, Link } from '@chakra-ui/react';
 import SpinnerComponent from '../components/Spinner';
-import CommonButton from '../components/CommonButton';
+import ButtonComponent from '../components/ButtonComponent';
 
 const Competitors = () => {
   const authContext = useContext(AuthContext);
@@ -93,7 +93,7 @@ const Competitors = () => {
   return (
     <Box>
       <Stack justify="center" mt={10} mb={10}>
-        <CommonButton msg="Dodaj zawodnika" onClick={() => history.push('/add-competitor')} />
+        <ButtonComponent type="common" msg="Dodaj zawodnika" onClick={() => history.push('/add-competitor')} />
       </Stack>
       <Box>
         {competitorsDownloaded ? (

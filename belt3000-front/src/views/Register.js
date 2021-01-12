@@ -13,7 +13,7 @@ import {
   useToast,
   Link,
 } from '@chakra-ui/react';
-import CommonButton from '../components/CommonButton';
+import ButtonComponent from '../components/ButtonComponent';
 import { NavLink } from 'react-router-dom';
 
 const RegisterAdmin = () => {
@@ -132,7 +132,7 @@ const RegisterAdmin = () => {
         </FormControl>
       </Stack>
       <Box mt={5}>
-        <CommonButton msg="Zarejestruj" onClick={handleSubmit} />
+        <ButtonComponent type="success" msg="Zarejestruj" onClick={handleSubmit} />
         <Link as={NavLink} to="/login-admin">
           <Box mt={5} textAlign="center">
             <Text>Masz konto? Zaloguj się.</Text>

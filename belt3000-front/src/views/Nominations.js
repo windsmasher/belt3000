@@ -4,7 +4,7 @@ import { Table, Thead, Tbody, Tr, Th, Td, Select, useToast, Stack, Box } from '@
 import { AuthContext } from '../context';
 import { useHistory } from 'react-router-dom';
 import SpinnerComponent from '../components/Spinner';
-import CommonButton from '../components/CommonButton';
+import ButtonComponent from '../components/ButtonComponent';
 
 const Nominations = () => {
   const [nominations, setNominations] = useState([]);
@@ -139,14 +139,18 @@ const Nominations = () => {
           <Box></Box>
         ) : (
           <Box>
-            <CommonButton msg="Dodaj nominacje" onClick={() => history.push(`/add-nomination/${selectedCompetitor}`)} />
+            <ButtonComponent
+              type="common"
+              msg="Dodaj nominacje"
+              onClick={() => history.push(`/add-nomination/${selectedCompetitor}`)}
+            />
           </Box>
         )}
         {selectedCompetitor === 'all' || competitors.length === 0 ? (
           <Box></Box>
         ) : (
           <Box>
-            <CommonButton msg="Usuń ostatnią nominacje" onClick={deletePreviousNomination} />
+            <ButtonComponent type="common" msg="Usuń ostatnią nominacje" onClick={deletePreviousNomination} />
           </Box>
         )}
       </Stack>
