@@ -126,7 +126,7 @@ const Nominations = () => {
 
   return (
     <Box>
-      <Stack spacing={8} direction="row" align="center" justify="center" mt={10} mb={10} align="center">
+      <Stack direction="row" align="center" justify="center" mt={10} mb={10}>
         <Select name="person" value={selectedCompetitor} onChange={handleNominationPerson}>
           <option value="all">Wszystkie</option>
           {competitors.map(person => (

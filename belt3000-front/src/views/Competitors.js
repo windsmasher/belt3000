@@ -2,9 +2,10 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Config } from '../config/config';
 import { AuthContext } from '../context';
 import { useHistory, NavLink } from 'react-router-dom';
-import { Table, Thead, Tbody, Tr, Th, Td, useToast, Stack, Box, Link } from '@chakra-ui/react';
+import { Table, Thead, Tbody, Tr, Th, Td, useToast, Stack, Box, Link, Flex } from '@chakra-ui/react';
 import SpinnerComponent from '../components/Spinner';
 import ButtonComponent from '../components/ButtonComponent';
+import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
 
 const Competitors = () => {
   const authContext = useContext(AuthContext);
@@ -76,16 +77,18 @@ const Competitors = () => {
       <Td>{comp.belt}</Td>
       <Td>{comp.stripes}</Td>
       <Td>
-        {' '}
-        <Link as={NavLink} to={`/add-competitor/${comp._id}`}>
-          Edytuj
-        </Link>
+        <Flex justifyItems="center">
+          <Link as={NavLink} to={`/add-competitor/${comp._id}`}>
+            <EditIcon w={5} h={5} />
+          </Link>
+        </Flex>
       </Td>
       <Td>
-        {' '}
-        <Link href="#" onClick={() => handleDelete(comp._id)}>
-          Usuń
-        </Link>
+        <Flex justifyItems="center">
+          <Link href="#" onClick={() => handleDelete(comp._id)}>
+            <DeleteIcon w={5} h={5} />
+          </Link>
+        </Flex>
       </Td>
     </Tr>
   ));
@@ -106,8 +109,8 @@ const Competitors = () => {
                 <Th>Kategoria wiekowa</Th>
                 <Th>Kolor pasa</Th>
                 <Th>Ilość belek</Th>
-                <Th>Edytuj zawodnika</Th>
-                <Th>Usuń zawodnika</Th>
+                <Th>Edytuj</Th>
+                <Th>Usuń</Th>
               </Tr>
             </Thead>
             <Tbody>{competitorsList}</Tbody>
