@@ -45,7 +45,7 @@ const Login = () => {
       if (res.status === 200) {
         const data = await res.json();
         authContext.login(data.token);
-        history.push('/');
+        history.push('/home');
       } else {
         toast({
           title: 'Wystąpił błąd.',

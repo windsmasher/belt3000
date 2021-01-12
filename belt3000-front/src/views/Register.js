@@ -74,7 +74,7 @@ const RegisterAdmin = () => {
         direction={['column', 'row', 'row', 'row']}
         mt={10}
       >
-        <FormControl size="md">
+        <FormControl size="md" isRequired>
           <FormLabel>Imię</FormLabel>
           <Input
             type="text"
@@ -84,7 +84,7 @@ const RegisterAdmin = () => {
             placeholder="Jan"
           />
         </FormControl>
-        <FormControl size="md">
+        <FormControl size="md" isRequired>
           <FormLabel>Nazwisko</FormLabel>
           <Input
             type="text"
@@ -101,7 +101,7 @@ const RegisterAdmin = () => {
         mb={10}
         mt={5}
       >
-        <FormControl size="md">
+        <FormControl size="md" isRequired>
           <FormLabel>Email</FormLabel>
           <Input
             type="email"
@@ -112,7 +112,7 @@ const RegisterAdmin = () => {
             placeholder="jan.kowalski@gmail.com"
           />
         </FormControl>
-        <FormControl size="md">
+        <FormControl size="md" isRequired>
           <FormLabel>Hasło</FormLabel>
           <InputGroup>
             <Input

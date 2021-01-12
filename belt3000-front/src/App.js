@@ -76,7 +76,7 @@ const App = () => {
               <PrivateRoute path="/competitors" component={Competitors} />
               <PrivateRoute path="/add-competitor/:competitorId?" component={AddCompetitor} />
               <PrivateRoute path="/add-nomination/:competitorId" component={AddNomination} />
-              <PrivateRoute exact path="/" component={Home} />
+              <PrivateRoute path="/home" component={Home} />
               <Route path="/login-admin" component={Login} />
               <Route path="/register-admin" component={RegisterAdmin} />
             </Switch>

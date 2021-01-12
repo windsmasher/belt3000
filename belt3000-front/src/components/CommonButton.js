@@ -5,7 +5,7 @@ const CommonButton = ({ msg, onClick }) => (
   <Flex justify="center" w="100%">
     <Button
       bgGradient="linear(to-r, blue.300, pink.900)"
-      _hover={{ bgGradient: 'linear(to-r, blue.200, pink.800)' }}
+      _hover={{ bgGradient: 'linear(to-r, blue.200, pink.800)', color: 'white' }}
       onClick={onClick}
       border="none"
       w="20%"

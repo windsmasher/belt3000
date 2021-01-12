@@ -33,7 +33,7 @@ const Navbar = () => {
         direction={['column', 'row', 'row', 'row']}
         pt={[4, 4, 0, 0]}
       >
-        <MenuItem isLink={true} to="/">
+        <MenuItem isLink={true} to="/home">
           Strona główna
         </MenuItem>
         <MenuItem isLink={true} to="/competitors">
