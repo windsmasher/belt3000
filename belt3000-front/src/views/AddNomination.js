@@ -93,7 +93,7 @@ const AddNomination = () => {
           />
         </FormControl>
       </Box>
-      <SuccessButton msg="Dodaj" />
+      <SuccessButton msg="Dodaj" onClick={handleSubmit} />
     </Box>
   );
 };
