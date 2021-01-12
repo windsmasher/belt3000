@@ -1,19 +1,19 @@
 import './App.css';
 import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import Competitors from './views/Competitors/Competitors';
-import Home from './views/Home/Home';
-import Nominations from './views/Nominations/Nominations';
-import Navbar from './components/Navbar/Navbar';
-import AddCompetitor from './views/AddCompetitor/AddCompetitor';
-import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import RegisterAdmin from './views/Register/Register';
-import AddNomination from './views/AddNomination/AddNomination';
-import Login from './views/Login/Login';
+import Competitors from './views/Competitors';
+import Home from './views/Home';
+import Nominations from './views/Nominations';
+import AddCompetitor from './views/AddCompetitor';
+import ErrorBoundary from './components/ErrorBoundary';
+import RegisterAdmin from './views/Register';
+import AddNomination from './views/AddNomination';
+import Login from './views/Login';
 import { AuthContext } from './context';
-import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import PrivateRoute from './components/PrivateRoute';
 import { ChakraProvider } from '@chakra-ui/react';
-import Header from './components/Header/Header';
+import CommonLayout from './components/CommonLayout';
+import WelcomeLayout from './components/WelcomeLayout';
 
 let logoutTimer;
 
@@ -65,25 +65,31 @@ const App = () => {
           logout: logout,
         }}
       >
-        <Router>
-          <div>
-            <ErrorBoundary>
-              <div>
-                <Header />
-                {!!token ? <Navbar /> : null}
-                <Switch>
-                  <PrivateRoute path="/nominations" component={Nominations} />
-                  <PrivateRoute path="/competitors" component={Competitors} />
-                  <PrivateRoute path="/add-competitor/:competitorId?" component={AddCompetitor} />
-                  <PrivateRoute path="/add-nomination/:competitorId" component={AddNomination} />
-                  <PrivateRoute exact path="/" component={Home} />
-                  <Route path="/login-admin" component={Login} />
-                  <Route path="/register-admin" component={RegisterAdmin} />
-                </Switch>
-              </div>
-            </ErrorBoundary>
-          </div>
-        </Router>
+        <ErrorBoundary>
+          <Router>
+            <Switch>
+              <Route>
+                <CommonLayout>
+                  <Switch>
+                    <PrivateRoute path="/nominations" component={Nominations} />
+                    <PrivateRoute path="/competitors" component={Competitors} />
+                    <PrivateRoute path="/add-competitor/:competitorId?" component={AddCompetitor} />
+                    <PrivateRoute path="/add-nomination/:competitorId" component={AddNomination} />
+                    <PrivateRoute exact path="/" component={Home} />
+                  </Switch>
+                </CommonLayout>
+              </Route>
+              <Route path="/login-admin">
+                <WelcomeLayout>
+                  <Switch>
+                    <Route path="/login-admin" component={Login} />
+                    <Route path="/register-admin" component={RegisterAdmin} />
+                  </Switch>
+                </WelcomeLayout>
+              </Route>
+            </Switch>
+          </Router>
+        </ErrorBoundary>
       </AuthContext.Provider>
     </ChakraProvider>
   );

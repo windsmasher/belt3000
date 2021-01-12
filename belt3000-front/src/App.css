@@ -32,24 +32,3 @@
     transform: rotate(360deg);
   }
 }
-
-.row {
-  margin: 10px;
-}
-
-.container-center {
-  display: flex;
-  justify-content: center;
-  margin: 10px;
-}
-
-.container-spinner {
-  display: flex;
-  justify-content: center;
-  margin-top: 100px;
-}
-
-.btn-wide {
-  width: 300px;
-  height: 40px;
-}

@@ -1,9 +1,10 @@
-import './Competitors.css';
 import React, { useState, useContext, useEffect } from 'react';
-import { Config } from '../../config/config';
-import { AuthContext } from '../../context';
-import { useHistory } from 'react-router-dom';
-import { Table, Thead, Tbody, Tr, Th, Td, Spinner, useToast, Button } from '@chakra-ui/react';
+import { Config } from '../config/config';
+import { AuthContext } from '../context';
+import { useHistory, NavLink } from 'react-router-dom';
+import { Table, Thead, Tbody, Tr, Th, Td, useToast, Stack, Box, Link } from '@chakra-ui/react';
+import SpinnerComponent from '../components/Spinner';
+import CommonButton from '../components/CommonButton';
 
 const Competitors = () => {
   const authContext = useContext(AuthContext);
@@ -37,7 +38,7 @@ const Competitors = () => {
   const handleDelete = async id => {
     try {
       const res = await fetch(`${Config.API_URL}competitor/${id}`, {
-        meThod: 'DELETE',
+        method: 'DELETE',
         headers: { auThorization: authContext.token },
       });
       if (res.status !== 200) {
@@ -76,23 +77,25 @@ const Competitors = () => {
       <Td>{comp.stripes}</Td>
       <Td>
         {' '}
-        <a href={`/add-competitor/${comp._id}`}>Edytuj</a>
+        <Link as={NavLink} to={`/add-competitor/${comp._id}`}>
+          Edytuj
+        </Link>
       </Td>
       <Td>
         {' '}
-        <a href="#" onClick={() => handleDelete(comp._id)}>
+        <Link href="#" onClick={() => handleDelete(comp._id)}>
           Usuń
-        </a>
+        </Link>
       </Td>
     </Tr>
   ));
 
   return (
-    <div>
-      <div className="container-center">
-        <Button onClick={() => history.push('/add-competitor')}>Dodaj zawodnika</Button>
-      </div>
-      <div>
+    <Box>
+      <Stack justify="center" mt={10} mb={10}>
+        <CommonButton msg="Dodaj zawodnika" onClick={() => history.push('/add-competitor')} />
+      </Stack>
+      <Box>
         {competitorsDownloaded ? (
           <Table>
             <Thead>
@@ -110,14 +113,10 @@ const Competitors = () => {
             <Tbody>{competitorsList}</Tbody>
           </Table>
         ) : (
-          <div className="container-spinner">
-            <Spinner animation="border" role="status">
-              <span className="sr-only">Loading...</span>
-            </Spinner>
-          </div>
+          <SpinnerComponent />
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

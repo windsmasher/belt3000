@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Config } from '../../config/config';
-import { Table, Thead, Tbody, Tr, Th, Td, Spinner, Button, Select, useToast } from '@chakra-ui/react';
-import { AuthContext } from '../../context';
+import { Config } from '../config/config';
+import { Table, Thead, Tbody, Tr, Th, Td, Select, useToast, Stack, Box } from '@chakra-ui/react';
+import { AuthContext } from '../context';
 import { useHistory } from 'react-router-dom';
+import SpinnerComponent from '../components/Spinner';
+import CommonButton from '../components/CommonButton';
 
 const Nominations = () => {
   const [nominations, setNominations] = useState([]);
@@ -123,30 +125,32 @@ const Nominations = () => {
   ));
 
   return (
-    <div>
-      {selectedCompetitor === 'all' ? (
-        <div></div>
-      ) : (
-        <div className="container-center">
-          <Button onClick={() => history.push(`/add-nomination/${selectedCompetitor}`)}>Dodaj nominacje</Button>
-        </div>
-      )}
-      {selectedCompetitor === 'all' || competitors.length === 0 ? (
-        <div></div>
-      ) : (
-        <div className="container-center">
-          <Button onClick={deletePreviousNomination}>Usuń ostatnią nominacje</Button>
-        </div>
-      )}
-      <Select name="person" value={selectedCompetitor} onChange={handleNominationPerson}>
-        <option value="all">Wszystkie</option>
-        {competitors.map(person => (
-          <option key={person._id} value={person._id}>
-            {`${person.firstname} ${person.lastname}`}
-          </option>
-        ))}
-      </Select>
-      <div>
+    <Box>
+      <Stack spacing={8} direction="row" align="center" justify="center" mt={10} mb={10} align="center">
+        <Select name="person" value={selectedCompetitor} onChange={handleNominationPerson}>
+          <option value="all">Wszystkie</option>
+          {competitors.map(person => (
+            <option key={person._id} value={person._id}>
+              {`${person.firstname} ${person.lastname}`}
+            </option>
+          ))}
+        </Select>
+        {selectedCompetitor === 'all' ? (
+          <Box></Box>
+        ) : (
+          <Box>
+            <CommonButton msg="Dodaj nominacje" onClick={() => history.push(`/add-nomination/${selectedCompetitor}`)} />
+          </Box>
+        )}
+        {selectedCompetitor === 'all' || competitors.length === 0 ? (
+          <Box></Box>
+        ) : (
+          <Box>
+            <CommonButton msg="Usuń ostatnią nominacje" onClick={deletePreviousNomination} />
+          </Box>
+        )}
+      </Stack>
+      <Box>
         {nominationsDownloaded ? (
           <Table>
             <Thead>
@@ -161,14 +165,10 @@ const Nominations = () => {
             <Tbody>{nominationList}</Tbody>
           </Table>
         ) : (
-          <div className="container-spinner">
-            <Spinner animation="border" role="status">
-              <span className="sr-only">Loading...</span>
-            </Spinner>
-          </div>
+          <SpinnerComponent />
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 
