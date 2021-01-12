@@ -14,6 +14,8 @@ import PrivateRoute from './components/PrivateRoute';
 import { ChakraProvider } from '@chakra-ui/react';
 import CommonLayout from './components/CommonLayout';
 import WelcomeLayout from './components/WelcomeLayout';
+import Header from './components/Header';
+import Navbar from './components/Navbar';
 
 let logoutTimer;
 
@@ -67,26 +69,16 @@ const App = () => {
       >
         <ErrorBoundary>
           <Router>
+            <Header />
+            {!!token ? <Navbar /> : null}
             <Switch>
-              <Route>
-                <CommonLayout>
-                  <Switch>
-                    <PrivateRoute path="/nominations" component={Nominations} />
-                    <PrivateRoute path="/competitors" component={Competitors} />
-                    <PrivateRoute path="/add-competitor/:competitorId?" component={AddCompetitor} />
-                    <PrivateRoute path="/add-nomination/:competitorId" component={AddNomination} />
-                    <PrivateRoute exact path="/" component={Home} />
-                  </Switch>
-                </CommonLayout>
-              </Route>
-              <Route path="/login-admin">
-                <WelcomeLayout>
-                  <Switch>
-                    <Route path="/login-admin" component={Login} />
-                    <Route path="/register-admin" component={RegisterAdmin} />
-                  </Switch>
-                </WelcomeLayout>
-              </Route>
+              <PrivateRoute path="/nominations" component={Nominations} />
+              <PrivateRoute path="/competitors" component={Competitors} />
+              <PrivateRoute path="/add-competitor/:competitorId?" component={AddCompetitor} />
+              <PrivateRoute path="/add-nomination/:competitorId" component={AddNomination} />
+              <PrivateRoute exact path="/" component={Home} />
+              <Route path="/login-admin" component={Login} />
+              <Route path="/register-admin" component={RegisterAdmin} />
             </Switch>
           </Router>
         </ErrorBoundary>

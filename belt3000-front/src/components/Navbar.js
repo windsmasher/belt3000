@@ -8,18 +8,18 @@ const Navbar = () => {
 
   return (
     <Flex
-      // bgGradient={[
-      //   'white',
-      //   'linear(to-b, #6f2232, #c3073f)',
-      //   'linear(to-r, #6f2232, #c3073f)',
-      //   'linear(to-r, #6f2232, #c3073f)',
-      // ]}
-      // color={[
-      //   'black',
-      //   'linear(to-b, #6f2232, #c3073f)',
-      //   'linear(to-r, #6f2232, #c3073f)',
-      //   'linear(to-r, #6f2232, #c3073f)',
-      // ]}
+      bgGradient={[
+        'white',
+        'linear(to-b, blue.300, pink.900)',
+        'linear(to-r, blue.300, pink.900)',
+        'linear(to-r, blue.300, pink.900)',
+      ]}
+      color={[
+        'black',
+        'linear(to-b, blue.300, pink.900)',
+        'linear(to-r, blue.300, pink.900)',
+        'linear(to-r, blue.300, pink.900)',
+      ]}
       p={5}
       mt={5}
       mb={5}
