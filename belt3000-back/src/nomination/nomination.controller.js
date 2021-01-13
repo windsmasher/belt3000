@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Competitor = require('../competitor/competitor.model');
+const Gym = require('../gym/gym.model');
 const { validateAddNomination } = require('./addNomination.middleware');
 const utils = require('./nomination.utils');
 

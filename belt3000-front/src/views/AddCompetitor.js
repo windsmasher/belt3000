@@ -18,7 +18,11 @@ const AddCompetitor = () => {
   const authContext = useContext(AuthContext);
   const toast = useToast();
 
-  useEffect(async () => {
+  useEffect(() => {
+    fetchCompetitor();
+  }, [competitorId]);
+
+  const fetchCompetitor = async () => {
     if (competitorId) {
       const response = await fetch(`${Config.API_URL}competitor/one/${competitorId}`, {
         method: 'GET',
@@ -36,7 +40,7 @@ const AddCompetitor = () => {
 
       setCompetitor(competitorTemp);
     }
-  }, [competitorId]);
+  };
 
   const handleSubmit = async event => {
     event.preventDefault();

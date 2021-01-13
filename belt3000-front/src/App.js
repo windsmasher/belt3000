@@ -12,8 +12,6 @@ import Login from './views/Login';
 import { AuthContext } from './context';
 import PrivateRoute from './components/PrivateRoute';
 import { ChakraProvider } from '@chakra-ui/react';
-import CommonLayout from './components/CommonLayout';
-import WelcomeLayout from './components/WelcomeLayout';
 import Header from './components/Header';
 import Navbar from './components/Navbar';
 

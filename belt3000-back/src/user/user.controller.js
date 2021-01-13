@@ -1,5 +1,5 @@
 const { validateAdminRegister } = require('./register.middleware');
-const User = require('./user.model');
+const Gym = require('../gym/gym.model');
 const express = require('express');
 const router = express.Router();
 

@@ -26,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const competitor = require('./src/competitor/competitor.controller');
 const nomination = require('./src/nomination/nomination.controller');
 const user = require('./src/user/user.controller');
+const gym = require('./src/gym/gym.controller');
 const auth = require('./src/auth/auth.controller');
 
 const withAuth = require('./src/auth/auth.middleware');
@@ -33,6 +34,7 @@ const withAuth = require('./src/auth/auth.middleware');
 app.use('/competitor/', competitor);
 app.use('/nomination/', nomination);
 app.use('/user/', user);
+app.use('/gym/', gym);
 app.use('/auth/', auth);
 
 // app.use(function (err, req, res, next) {

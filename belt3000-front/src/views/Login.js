@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
 import { Config } from '../config/config';
-import { withRouter } from 'react-router-dom';
 import { NavLink, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context';
 import {

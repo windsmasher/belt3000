@@ -2,16 +2,18 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const express = require('express');
 const router = express.Router();
-const User = require('../user/user.model');
+const Gym = require('../gym/gym.model');
 
 router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
   let user = null;
-
   try {
-    user = await User.findOne({ email });
+    const gyms = await Gym.find({ admins: { $elemMatch: { email: email } } });
+    if (gyms && gyms.length > 0 && gyms[0].admins) {
+      user = gyms[0].admins.find(admin => admin.email === email);
+    }
   } catch (e) {
-    next(e);
+    return next(e);
   }
   if (!user) {
     return res.status(401).json({
@@ -27,7 +29,7 @@ router.post('/login', async (req, res, next) => {
       });
     }
   } catch (e) {
-    next(e);
+    return next(e);
   }
 
   const payload = { email };
