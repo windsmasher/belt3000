@@ -20,7 +20,7 @@ router.post('/register-admin', validateAdminRegister, async (req, res, next) => 
 
   const existingUser = userRepository.find({ email });
   if (existingUser) {
-    return res.status(400).json('User with this email exist.');
+    return res.status(400).json({ errorMsg: 'Użytkownik z podanym adresem email już istnieje.' });
   }
 
   let newUser = null;

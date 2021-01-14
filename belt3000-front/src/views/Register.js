@@ -40,8 +40,9 @@ const RegisterAdmin = () => {
         },
       });
       if (res.status !== 201) {
+        const errorMsg = (await res?.json())?.errorMsg;
         toast({
-          title: 'Wystąpił błąd. Niepoprawne dane.',
+          title: errorMsg ? errorMsg : 'Wystąpił błąd. Niepoprawne dane.',
           status: 'error',
           duration: 3000,
           isClosable: true,
