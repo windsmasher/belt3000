@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const Gym = require('../gym/gym.model');
 const { validateAddCompetitor } = require('./addCompetitor.middleware');
 const withAuth = require('../auth/auth.middleware');
 

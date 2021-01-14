@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const Gym = require('./gym.model');
 const { validateNewGymWithAccount } = require('./newGymWithAccount.middleware');
 const { validateNewGymWithExistingAccount } = require('./newGymWithExistingAccount.middleware');
 const { withAuth } = require('../auth/auth.middleware');

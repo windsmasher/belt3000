@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const express = require('express');
 const router = express.Router();
-const Gym = require('../gym/gym.model');
 
 router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;

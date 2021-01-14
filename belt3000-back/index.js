@@ -1,23 +1,33 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 const cookieParser = require('cookie-parser');
+const typeorm = require('typeorm');
 require('dotenv').config();
 
-const uri = 'mongodb+srv://windsmasher:agent007@cluster0.iplom.mongodb.net/belt3000?retryWrites=true&w=majority';
-try {
-  mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, err => {
-    if (err) {
-      console.log(err);
-      throw new Error(err);
-    }
-    console.log('Connected to MongoDB.');
+typeorm
+  .createConnection({
+    type: 'mysql',
+    host: 'localhost',
+    port: 3306,
+    username: 'root',
+    password: '',
+    database: 'belt3000',
+    synchronize: true,
+    entities: [
+      require('./src/user/user.schema'),
+      require('./src/gym/gym.schema'),
+      require('./src/nomination/nomination.schema'),
+    ],
+  })
+  .then(function () {
+    console.log('Connected to mysql.');
+  })
+  .catch(function (error) {
+    console.log('Error: ', error);
   });
-} catch (error) {
-  console.log('Could not connect to DB.');
-}
+
 +app.use(cors());
 app.use(cookieParser());
 app.use(bodyParser.json());
