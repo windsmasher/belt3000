@@ -28,7 +28,7 @@ router.post('/add/:competitorId', validateAddNomination, async (req, res, next) 
     return res.status(500).json({ errorMsg: 'Data nie może być wcześniejsza od ostatniej daty nominacji' });
   }
 
-  if (lastBeltNomination.nominationLevel === 'czarny' && Number(req.body.nominationType) === 0) {
+  if (lastBeltNomination && lastBeltNomination.nominationLevel === 'czarny' && Number(req.body.nominationType) === 0) {
     return res.status(500).json({ errorMsg: 'Ta osoba ma już czarny pas' });
   }
 

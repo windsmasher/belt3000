@@ -23,11 +23,18 @@ router.get('/one/:id', withAuth, async (req, res) => {
 
 router.delete('/:id', withAuth, async (req, res) => {
   const userRepository = getConnection().getRepository('User');
+  const nominationRepository = getConnection().getRepository('Nomination');
   if (!req || !req.params || !req.params.id) {
     return res.status(400).json('Invalid param.');
   }
 
   const user = await userRepository.findOne({ id: req.params.id });
+  const nominations = await nominationRepository.find({
+    where: { nominatedPerson: { id: req.params.id } },
+    relations: ['nominatedPerson'],
+  });
+
+  await nominationRepository.remove(nominations);
   await userRepository.remove(user);
 
   return res.status(200).send();
