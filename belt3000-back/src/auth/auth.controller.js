@@ -2,15 +2,14 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const express = require('express');
 const router = express.Router();
+const { getConnection } = require('typeorm');
 
 router.post('/login', async (req, res, next) => {
+  const userRepository = getConnection().getRepository('User');
   const { email, password } = req.body;
   let user = null;
   try {
-    const gyms = await Gym.find({ admins: { $elemMatch: { email: email } } });
-    if (gyms && gyms.length > 0 && gyms[0].admins) {
-      user = gyms[0].admins.find(admin => admin.email === email);
-    }
+    user = await userRepository.findOne({ email: email });
   } catch (e) {
     return next(e);
   }

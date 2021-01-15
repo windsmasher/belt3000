@@ -29,7 +29,7 @@ module.exports = new EntitySchema({
       ],
     },
     nominationType: {
-      type: 'varchar',
+      type: 'int',
     },
     description: {
       type: 'varchar',

@@ -2,15 +2,41 @@ const express = require('express');
 const router = express.Router();
 const { validateAddNomination } = require('./addNomination.middleware');
 const utils = require('./nomination.utils');
+const { getConnection } = require('typeorm');
+const { isBefore } = require('date-fns');
 
 router.post('/add/:competitorId', validateAddNomination, async (req, res, next) => {
+  const nominationRepository = getConnection().getRepository('Nomination');
+  const userRepository = getConnection().getRepository('User');
+
   if (!req || !req.params || !req.params.competitorId) {
     return res.status(400).json('Invalid param.');
   }
 
-  let competitor = null;
+  const lastNomination = await nominationRepository.findOne({
+    where: { nominatedPerson: { id: req.params.competitorId } },
+    relations: ['nominatedPerson'],
+    order: { date: 'DESC' },
+  });
+  const lastBeltNomination = await nominationRepository.findOne({
+    where: { nominatedPerson: { id: req.params.competitorId }, nominationType: 0 },
+    relations: ['nominatedPerson'],
+    order: { date: 'DESC' },
+  });
+
+  if (lastNomination && isBefore(new Date(req.body.date), new Date(lastNomination.date))) {
+    return res.status(500).json({ errorMsg: 'Data nie może być wcześniejsza od ostatniej daty nominacji' });
+  }
+
+  if (lastBeltNomination.nominationLevel === 'czarny' && Number(req.body.nominationType) === 0) {
+    return res.status(500).json({ errorMsg: 'Ta osoba ma już czarny pas' });
+  }
+
+  let competitor;
+  let nomination;
+
   try {
-    competitor = await Competitor.findById(req.params.competitorId);
+    competitor = await userRepository.findOne({ id: req.params.competitorId });
   } catch (e) {
     return next(e.toString());
   }
@@ -22,30 +48,30 @@ router.post('/add/:competitorId', validateAddNomination, async (req, res, next) 
   const nominationType = Number(req.body.nominationType);
 
   if (nominationType === 0) {
-    console.log(`to higer belt: ${competitor.belt} and ${competitor.isAdult}`);
     const newBelt = utils.higherBelt(competitor.belt.replace(' ', ''), competitor.isAdult);
-    console.log('higer belt: ', newBelt);
 
     if (competitor.belt === 'zielony') {
       competitor.isAdult = true;
     }
     competitor.belt = newBelt;
     competitor.stripes = 0;
-    competitor.nomination.push({
+
+    nomination = nominationRepository.create({
       date,
       description,
-      nomination: newBelt,
-      type: nominationType,
+      nominationLevel: newBelt,
+      nominationType,
+      nominatedPerson: competitor,
     });
   } else {
     competitor.stripes += nominationType;
     if (competitor.stripes > 4) {
-      return res.status(400).json('Too many stripes.');
+      return res.status(400).json({ errorMsg: 'Ta osoba ma już cztery belki' });
     }
-    competitor.nomination.push({
+    nomination = nominationRepository.create({
       date,
       description,
-      nomination:
+      nominationLevel:
         nominationType === 1
           ? '1 belka'
           : nominationType === 2
@@ -53,36 +79,42 @@ router.post('/add/:competitorId', validateAddNomination, async (req, res, next) 
           : nominationType === 3
           ? '3 Belki'
           : '4 belki',
-      type: nominationType,
+      nominationType,
+      nominatedPerson: competitor,
     });
   }
 
   try {
-    await competitor.save();
+    await nominationRepository.save(nomination);
+    await userRepository.save(competitor);
   } catch (err) {
     return next(err);
   }
-  return res.status(201).json(competitor);
+  return res.status(201).json(nomination);
 });
 
 router.get('/by-competitor/:competitorId', async (req, res, next) => {
+  const nominationRepository = getConnection().getRepository('Nomination');
   if (!req || !req.params || !req.params.competitorId) {
     return res.status(400).json('Invalid param.');
   }
 
   try {
-    const competitor = await Competitor.findById(req.params.competitorId);
-    if (!competitor) {
+    const nominations = await nominationRepository.find({
+      where: { nominatedPerson: { id: req.params.competitorId } },
+      relations: ['nominatedPerson'],
+    });
+    if (!nominations) {
       return res.status(500).json('No such object with this id.');
     }
     return res.status(200).json(
-      competitor.nomination
+      nominations
         .map(n => ({
           id: n.id,
-          nomination: n.nomination,
+          nomination: n.nominationLevel,
           description: n.description,
           date: n.date,
-          person: `${competitor.firstname} ${competitor.lastname}`,
+          person: `${n.nominatedPerson.firstname} ${n.nominatedPerson.lastname}`,
         }))
         .sort((a, b) => new Date(b.date) - new Date(a.date)),
     );
@@ -92,27 +124,22 @@ router.get('/by-competitor/:competitorId', async (req, res, next) => {
 });
 
 router.get('/all', async (req, res, next) => {
+  const nominationRepository = getConnection().getRepository('Nomination');
   try {
-    const competitors = await Competitor.find({});
-    if (!competitors || competitors.length === 0) {
+    const nominations = await nominationRepository.find({ relations: ['nominatedPerson'] });
+    if (!nominations || nominations.length === 0) {
       return res.status(200).json([]);
     }
 
     return res.status(200).json(
-      competitors
-        .reduce(
-          (prev, curr) =>
-            prev.concat(
-              curr.nomination.map(n => ({
-                id: n.id,
-                nomination: n.nomination,
-                description: n.description,
-                date: n.date,
-                person: `${curr.firstname} ${curr.lastname}`,
-              })),
-            ),
-          [],
-        )
+      nominations
+        .map(n => ({
+          id: n.id,
+          nomination: n.nominationLevel,
+          description: n.description,
+          date: n.date,
+          person: `${n.nominatedPerson.firstname} ${n.nominatedPerson.lastname}`,
+        }))
         .sort((a, b) => new Date(b.date) - new Date(a.date)),
     );
   } catch (err) {
@@ -121,30 +148,33 @@ router.get('/all', async (req, res, next) => {
 });
 
 router.delete('/previous/:competitorId', async (req, res, next) => {
+  const nominationRepository = getConnection().getRepository('Nomination');
+  const userRepository = getConnection().getRepository('User');
   if (!req || !req.params || !req.params.competitorId) {
     return res.status(400).json('Invalid param.');
   }
 
-  const competitor = await Competitor.findById(req.params.competitorId);
-  const nominationToDelete = competitor.nomination.sort((a, b) => {
-    return new Date(b.date) - new Date(a.date);
-  })[0];
-  console.log(nominationToDelete);
-  if (nominationToDelete.type === 0) {
-    const previousBelt = utils.lowerBelt(nominationToDelete.nomination, competitor.isAdult);
+  const competitor = await userRepository.findOne({ id: req.params.competitorId });
+
+  const nominationToDelete = await nominationRepository.findOne({
+    where: { nominatedPerson: { id: req.params.competitorId } },
+    relations: ['nominatedPerson'],
+    order: { date: 'DESC' },
+  });
+
+  if (nominationToDelete.nominationType === 0) {
+    const previousBelt = utils.lowerBelt(nominationToDelete.nominationLevel, competitor.isAdult);
     competitor.belt = previousBelt;
     if (previousBelt === 'zielony') {
       competitor.isAdult = false;
     }
   } else {
-    console.log('stripes', competitor.stripes);
-    console.log('nom typ', nominationToDelete.nomination);
-    competitor.stripes -= Number(nominationToDelete.type);
+    competitor.stripes -= Number(nominationToDelete.nominationType);
   }
 
-  competitor.nomination = competitor.nomination.filter(nom => nom.id !== nominationToDelete.id);
   try {
-    await competitor.save();
+    await userRepository.save(competitor);
+    await nominationRepository.remove(nominationToDelete);
   } catch (err) {
     return next(err);
   }

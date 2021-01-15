@@ -11,6 +11,7 @@ module.exports = new EntitySchema({
     },
     role: {
       type: 'int',
+      default: 1,
     },
     firstname: {
       type: 'varchar',
@@ -26,6 +27,7 @@ module.exports = new EntitySchema({
     },
     isAdult: {
       type: 'boolean',
+      default: null,
     },
     belt: {
       type: 'varchar',
@@ -33,7 +35,7 @@ module.exports = new EntitySchema({
     },
     stripes: {
       type: 'int',
-      default: null,
+      default: 0,
     },
   },
 });

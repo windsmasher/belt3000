@@ -130,7 +130,7 @@ const Nominations = () => {
         <Select name="person" value={selectedCompetitor} onChange={handleNominationPerson}>
           <option value="all">Wszystkie</option>
           {competitors.map(person => (
-            <option key={person._id} value={person._id}>
+            <option key={person.id} value={person.id}>
               {`${person.firstname} ${person.lastname}`}
             </option>
           ))}

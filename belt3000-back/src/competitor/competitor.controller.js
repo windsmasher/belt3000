@@ -2,37 +2,44 @@ const express = require('express');
 const router = express.Router();
 const { validateAddCompetitor } = require('./addCompetitor.middleware');
 const withAuth = require('../auth/auth.middleware');
+const { getConnection, Not, IsNull } = require('typeorm');
 
 router.get('/all', withAuth, async (req, res) => {
-  const competitors = await Competitor.find({});
+  const userRepository = getConnection().getRepository('User');
+  const competitors = await userRepository.find({ belt: Not(IsNull()) });
 
   return res.status(200).json(competitors);
 });
 
 router.get('/one/:id', withAuth, async (req, res) => {
+  const userRepository = getConnection().getRepository('User');
   if (!req || !req.params || !req.params.id) {
     return res.status(400).json('Invalid param.');
   }
-  const competitor = await Competitor.findById(req.params.id);
+  const competitor = await userRepository.findOne({ id: req.params.id });
 
   return res.status(200).json(competitor);
 });
 
 router.delete('/:id', withAuth, async (req, res) => {
+  const userRepository = getConnection().getRepository('User');
   if (!req || !req.params || !req.params.id) {
     return res.status(400).json('Invalid param.');
   }
 
-  await Competitor.findOneAndDelete({ _id: req.params.id });
+  const user = await userRepository.findOne({ id: req.params.id });
+  await userRepository.remove(user);
+
   return res.status(200).send();
 });
 
 router.patch('/:id', withAuth, validateAddCompetitor, async (req, res, next) => {
+  const userRepository = getConnection().getRepository('User');
   if (!req || !req.params || !req.params.id) {
     return res.status(400).json('Invalid param.');
   }
 
-  const competitor = await Competitor.findById(req.params.id);
+  const competitor = await userRepository.findOne({ id: req.params.id });
   competitor.firstname = req.body.firstname;
   competitor.lastname = req.body.lastname;
   competitor.isAdult = Boolean(req.body.isAdult);
@@ -40,7 +47,7 @@ router.patch('/:id', withAuth, validateAddCompetitor, async (req, res, next) => 
   competitor.stripes = Number(req.body.stripes);
 
   try {
-    await competitor.save();
+    await userRepository.save(competitor);
   } catch (e) {
     return next(e.toString());
   }
@@ -49,15 +56,17 @@ router.patch('/:id', withAuth, validateAddCompetitor, async (req, res, next) => 
 });
 
 router.post('/add', withAuth, validateAddCompetitor, async (req, res, next) => {
-  const newCompetitor = new Competitor();
-  newCompetitor.firstname = req.body.firstname;
-  newCompetitor.lastname = req.body.lastname;
-  newCompetitor.isAdult = Boolean(req.body.isAdult);
-  newCompetitor.belt = req.body.belt;
-  newCompetitor.stripes = Number(req.body.stripes);
+  const userRepository = getConnection().getRepository('User');
+  const newCompetitor = userRepository.create({
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
+    isAdult: Boolean(req.body.isAdult),
+    belt: req.body.belt,
+    stripes: Number(req.body.stripes),
+  });
 
   try {
-    await newCompetitor.save();
+    await userRepository.save(newCompetitor);
   } catch (e) {
     return next(e.toString());
   }

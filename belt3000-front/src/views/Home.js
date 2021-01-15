@@ -61,13 +61,13 @@ const Home = () => {
         <Box>
           <Stat mb={5}>
             <StatLabel>Łączna liczba zawodników</StatLabel>
-            <StatNumber>{competitors.length}</StatNumber>
+            <StatNumber>{competitors?.length || 0}</StatNumber>
           </Stat>
         </Box>
         <Box>
           <Stat>
             <StatLabel>Łączna liczba nominacji</StatLabel>
-            <StatNumber>{competitors.reduce((prev, curr) => prev + curr.nomination.length, 0)}</StatNumber>
+            <StatNumber>{competitors?.reduce((prev, curr) => prev + curr.nomination?.length, 0) || 0}</StatNumber>
           </Stat>
         </Box>
       </Box>

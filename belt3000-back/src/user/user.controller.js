@@ -25,7 +25,7 @@ router.post('/register-admin', validateAdminRegister, async (req, res, next) => 
 
   let newUser = null;
   try {
-    newUser = await userRepository.save({ firstname, lastname, password: hashedPassword, email });
+    newUser = await userRepository.save({ firstname, lastname, password: hashedPassword, email, role: 0 });
   } catch (e) {
     return next(e.toString());
   }

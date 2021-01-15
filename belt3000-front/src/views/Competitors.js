@@ -78,14 +78,14 @@ const Competitors = () => {
       <Td>{comp.stripes}</Td>
       <Td>
         <Flex justifyItems="center">
-          <Link as={NavLink} to={`/add-competitor/${comp._id}`}>
+          <Link as={NavLink} to={`/add-competitor/${comp.id}`}>
             <EditIcon w={5} h={5} />
           </Link>
         </Flex>
       </Td>
       <Td>
         <Flex justifyItems="center">
-          <Link href="#" onClick={() => handleDelete(comp._id)}>
+          <Link href="#" onClick={() => handleDelete(comp.id)}>
             <DeleteIcon w={5} h={5} />
           </Link>
         </Flex>
