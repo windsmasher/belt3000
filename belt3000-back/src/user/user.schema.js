@@ -50,7 +50,7 @@ module.exports = new EntitySchema({
       type: 'many-to-one',
       joinColumn: true,
     },
-    defaultGym: {
+    currentGym: {
       target: 'Gym',
       type: 'many-to-one',
       joinColumn: true,

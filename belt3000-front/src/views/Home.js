@@ -5,12 +5,14 @@ import { useToast, Box, Stat, StatNumber, StatLabel, Heading, Stack, Text } from
 
 const Home = () => {
   const [competitors, setCompetitors] = useState([]);
+  const [gymDetails, setGymDetails] = useState({ name: '', city: '' });
   const authContext = useContext(AuthContext);
   const toast = useToast();
 
   useEffect(() => {
-    fetchAllCompetitors();
-    console.log(competitors.map(competitor => competitor.nomination));
+    console.log(authContext.token);
+    // fetchAllCompetitors();
+    fetchGymDetails();
   }, []);
 
   const fetchAllCompetitors = async () => {
@@ -19,6 +21,7 @@ const Home = () => {
         headers: { authorization: authContext.token },
       });
       const competitors = await response.json();
+      console.log('competitors => ', competitors);
       setCompetitors(competitors);
     } catch (err) {
       toast({
@@ -31,6 +34,24 @@ const Home = () => {
     }
   };
 
+  const fetchGymDetails = async () => {
+    try {
+      const response = await fetch(`${Config.API_URL}gym/details`, {
+        headers: { authorization: authContext.token },
+      });
+      const gymDetails = await response.json();
+      console.log('gym details => ', gymDetails);
+      setGymDetails(gymDetails);
+    } catch (err) {
+      toast({
+        title: 'Wystąpił błąd.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <Stack
       justify={['center', 'space-between', 'flex-end', 'flex-end']}
@@ -40,7 +61,9 @@ const Home = () => {
     >
       <Box>
         <Box>
-          <Heading mb={8}>Aktywny klub: {authContext.gymId}</Heading>
+          <Heading mb={8}>
+            Aktywny klub: <Text color="blue.500">{gymDetails.name}</Text>
+          </Heading>
         </Box>
         <Box>
           <Heading mb={8}>Aktualności</Heading>

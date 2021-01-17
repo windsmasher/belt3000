@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { validateNewGymWithAccount } = require('./newGymWithAccount.middleware');
 const { validateNewGymWithExistingAccount } = require('./newGymWithExistingAccount.middleware');
-const { withAuth } = require('../auth/auth.middleware');
+const withAuth = require('../auth/auth.middleware');
 const bcrypt = require('bcrypt');
 const { getConnection } = require('typeorm');
 
@@ -14,7 +14,17 @@ router.get('/all', async (req, res, next) => {
 });
 
 router.get('/details', withAuth, async (req, res, next) => {
-  return null;
+  console.log(111);
+  const userRepository = getConnection().getRepository('User');
+
+  const user = await userRepository.findOne({ where: { email: req.email }, relations: ['currentGym'] });
+  if (!user || !user.currentGym) {
+    return res.status(400);
+  }
+
+  console.log(user);
+
+  return res.status(200).json(user.currentGym);
 });
 
 router.post('/new-gym-with-new-account', validateNewGymWithAccount, async (req, res, next) => {
@@ -58,7 +68,7 @@ router.post('/new-gym-with-new-account', validateNewGymWithAccount, async (req, 
       mainAdmin: newUser,
       users: [newUser],
     });
-    await userRepository.save({ defaultGym: newGym });
+    await userRepository.save({ currentGym: newGym });
   } catch (e) {
     return next(e.toString());
   }

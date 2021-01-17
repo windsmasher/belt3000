@@ -19,19 +19,16 @@ let logoutTimer;
 
 const App = () => {
   const [token, setToken] = useState(false);
-  const [gymId, setGymId] = useState(null);
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
 
-  const login = useCallback((token, gymId, expirationTime) => {
+  const login = useCallback((token, expirationTime) => {
     setToken(token);
-    setGymId(gymId);
     const expiration = expirationTime || new Date(new Date().getTime() + 1000 * 60 * 60);
     setTokenExpirationDate(expiration);
     localStorage.setItem(
       'userData',
       JSON.stringify({
         token,
-        gymId,
         expirationTime: expiration.toISOString(),
       }),
     );
@@ -66,7 +63,6 @@ const App = () => {
           token: token,
           login: login,
           logout: logout,
-          gymId: gymId,
         }}
       >
         <ErrorBoundary>

@@ -9,7 +9,7 @@ router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
   let user = null;
   try {
-    user = await userRepository.findOne({ where: { email: email }, relations: ['gyms', 'defaultGym'] });
+    user = await userRepository.findOne({ where: { email: email }, relations: ['gyms', 'currentGym'] });
     console.log('user => ', user);
   } catch (e) {
     return next(e);
@@ -26,7 +26,7 @@ router.post('/login', async (req, res, next) => {
 
   let gymId = null;
 
-  gymId = user.defaultGym && user.defaultGym.isAccepted ? user.defaultGym.id : null;
+  gymId = user.currentGym && user.currentGym.isAccepted ? user.currentGym.id : null;
 
   if (!gymId) {
     for (const gym of user.gyms) {

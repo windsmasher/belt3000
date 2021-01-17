@@ -43,7 +43,7 @@ const Login = () => {
       });
       if (res.status === 200) {
         const data = await res.json();
-        authContext.login(data.token, data.gymId);
+        authContext.login(data.token);
         history.push('/');
       } else {
         toast({
