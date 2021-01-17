@@ -97,7 +97,7 @@ const Nominations = () => {
         });
       } else {
         toast({
-          title: 'Błąd usunięcia ostatniej nominacji.',
+          title: (await res?.json())?.errorMsg || 'Błąd usunięcia ostatniej nominacji.',
           status: 'error',
           duration: 3000,
           isClosable: true,

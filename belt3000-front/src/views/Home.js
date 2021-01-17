@@ -40,6 +40,9 @@ const Home = () => {
     >
       <Box>
         <Box>
+          <Heading mb={8}>Aktywny klub: {authContext.gymId}</Heading>
+        </Box>
+        <Box>
           <Heading mb={8}>Aktualności</Heading>
         </Box>
         <Box textAlign="justify">

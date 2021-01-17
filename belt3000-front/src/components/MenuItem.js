@@ -1,7 +1,7 @@
 import { Text, Box, Link } from '@chakra-ui/react';
 import { NavLink } from 'react-router-dom';
 
-const MenuItem = ({ children, to = '/home', onClick, isLink }) => {
+const MenuItem = ({ children, to = '/', onClick, isLink }) => {
   const TextOfMenuItem = (
     <Text display="block" fontWeight="bold" _hover={{ textDecoration: 'none' }}>
       {children}

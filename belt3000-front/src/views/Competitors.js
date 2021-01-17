@@ -44,7 +44,7 @@ const Competitors = () => {
       });
       if (res.status !== 200) {
         toast({
-          title: 'Błąd usunięcia zawodnika.',
+          title: (await res?.json())?.errorMsg || 'Błąd usunięcia zawodnika.',
           status: 'error',
           duration: 3000,
           isClosable: true,

@@ -17,9 +17,15 @@ import ButtonComponent from '../components/ButtonComponent';
 import { NavLink } from 'react-router-dom';
 
 const RegisterAdmin = () => {
-  const [registerData, setRegisterData] = useState({ firstname: '', lastname: '', password: '', email: '' });
-  const toast = useToast();
+  const [registerData, setRegisterData] = useState({
+    firstname: '',
+    lastname: '',
+    password: '',
+    email: '',
+    newGymName: '',
+  });
   const [show, setShow] = useState(false);
+  const toast = useToast();
 
   const handleShowPassword = () => setShow(!show);
 
@@ -32,7 +38,7 @@ const RegisterAdmin = () => {
   const handleSubmit = async event => {
     event.preventDefault();
     try {
-      const res = await fetch(`${Config.API_URL}user/register-admin`, {
+      const res = await fetch(`${Config.API_URL}gym/new-gym-with-new-account`, {
         method: 'POST',
         body: JSON.stringify(registerData),
         headers: {
@@ -40,9 +46,8 @@ const RegisterAdmin = () => {
         },
       });
       if (res.status !== 201) {
-        const errorMsg = (await res?.json())?.errorMsg;
         toast({
-          title: errorMsg ? errorMsg : 'Wystąpił błąd. Niepoprawne dane.',
+          title: (await res?.json())?.errorMsg || 'Wystąpił błąd. Niepoprawne dane.',
           status: 'error',
           duration: 3000,
           isClosable: true,
@@ -68,7 +73,7 @@ const RegisterAdmin = () => {
   return (
     <Box>
       <Box textAlign="center" m={5} fontSize={30}>
-        <Text size="">Rejestracja</Text>
+        <Text size="">Rejestracja nowego klubu</Text>
       </Box>
       <Stack
         justify={['center', 'space-between', 'flex-end', 'flex-end']}
@@ -99,7 +104,7 @@ const RegisterAdmin = () => {
       <Stack
         justify={['center', 'space-between', 'flex-end', 'flex-end']}
         direction={['column', 'row', 'row', 'row']}
-        mb={10}
+        mb={5}
         mt={5}
       >
         <FormControl size="md" isRequired>
@@ -132,6 +137,17 @@ const RegisterAdmin = () => {
           </InputGroup>
         </FormControl>
       </Stack>
+      <FormControl size="md" id="newGymName">
+        <FormLabel>Nazwa Twojego klubu</FormLabel>
+        <Input
+          type="text"
+          name="newGymName"
+          label="Nazwa nowego klubu"
+          defaultValue={registerData.newGym}
+          onChange={e => setRegisterData({ ...registerData, newGymName: e.target.value })}
+          placeholder="Tu wpisz nazwę nowego klubu"
+        />
+      </FormControl>
       <Box mt={5}>
         <ButtonComponent type="success" msg="Zarejestruj" onClick={handleSubmit} />
         <Link as={NavLink} to="/login-admin">

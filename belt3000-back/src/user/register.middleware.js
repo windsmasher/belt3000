@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 exports.validateAdminRegister = [
   body('firstname', 'firstname property is required').not().isEmpty(),
   body('lastname', 'lastname property is required').not().isEmpty(),
+  body('gymId', 'gymId property is required').not().isEmpty(),
   body('email', 'email property is required').not().isEmpty(),
   body('email', 'email not valid').isEmail(),
   body('password', 'password property is required').not().isEmpty(),

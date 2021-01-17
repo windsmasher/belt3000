@@ -38,4 +38,22 @@ module.exports = new EntitySchema({
       default: 0,
     },
   },
+  relations: {
+    gyms: {
+      target: 'Gym',
+      inverseSide: 'users',
+      type: 'many-to-many',
+      cascade: false,
+    },
+    pendingGym: {
+      target: 'Gym',
+      type: 'many-to-one',
+      joinColumn: true,
+    },
+    defaultGym: {
+      target: 'Gym',
+      type: 'many-to-one',
+      joinColumn: true,
+    },
+  },
 });

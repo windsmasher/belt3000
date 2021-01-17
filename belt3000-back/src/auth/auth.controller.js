@@ -9,7 +9,8 @@ router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
   let user = null;
   try {
-    user = await userRepository.findOne({ email: email });
+    user = await userRepository.findOne({ where: { email: email }, relations: ['gyms', 'defaultGym'] });
+    console.log('user => ', user);
   } catch (e) {
     return next(e);
   }
@@ -17,6 +18,26 @@ router.post('/login', async (req, res, next) => {
     return res.status(401).json({
       error: 'Incorrect email or password',
     });
+  }
+
+  if (!user.gyms || user.gyms.length === 0) {
+    return res.status(400).json({ errorMsg: 'Użytkownik nie jest przyporządkowany do żadnego klubu' });
+  }
+
+  let gymId = null;
+
+  gymId = user.defaultGym && user.defaultGym.isAccepted ? user.defaultGym.id : null;
+
+  if (!gymId) {
+    for (const gym of user.gyms) {
+      if (gym.id && gym.isAccepted) {
+        gymId = gym.id;
+      }
+    }
+  }
+
+  if (!gymId) {
+    return res.status(400).json({ errorMsg: 'Klub nie został jeszcze zaakceptowany' });
   }
 
   try {
@@ -34,7 +55,7 @@ router.post('/login', async (req, res, next) => {
   const token = jwt.sign(payload, process.env.SECRET, {
     expiresIn: '1h',
   });
-  return res.status(200).json({ token: token });
+  return res.status(200).json({ token: token, gymId });
 });
 
 module.exports = router;

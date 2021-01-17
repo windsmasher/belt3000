@@ -62,7 +62,7 @@ const AddCompetitor = () => {
 
       if (res.status !== (competitorId ? 200 : 201)) {
         toast({
-          title: 'Wystąpił błąd. Niepoprawne dane.',
+          title: (await res?.json())?.errorMsg || 'Wystąpił błąd. Niepoprawne dane.',
           status: 'error',
           isClosable: true,
           duration: 3000,

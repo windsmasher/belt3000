@@ -43,11 +43,11 @@ const Login = () => {
       });
       if (res.status === 200) {
         const data = await res.json();
-        authContext.login(data.token);
-        history.push('/home');
+        authContext.login(data.token, data.gymId);
+        history.push('/');
       } else {
         toast({
-          title: 'Wystąpił błąd.',
+          title: (await res?.json())?.errorMsg || 'Wystąpił błąd.',
           status: 'error',
           duration: 3000,
           isClosable: true,

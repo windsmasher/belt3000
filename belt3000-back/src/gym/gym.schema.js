@@ -15,11 +15,23 @@ module.exports = new EntitySchema({
     city: {
       type: 'varchar',
     },
+    isAccepted: {
+      type: 'boolean',
+      default: false,
+    },
   },
   relations: {
-    headCoach: {
+    users: {
+      target: 'User',
+      inverseSide: 'gyms',
+      type: 'many-to-many',
+      joinTable: true,
+      cascade: false,
+    },
+    mainAdmin: {
       target: 'User',
       type: 'many-to-one',
+      joinColumn: true,
     },
   },
 });
