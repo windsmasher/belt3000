@@ -45,11 +45,6 @@ module.exports = new EntitySchema({
       type: 'many-to-many',
       cascade: false,
     },
-    pendingGym: {
-      target: 'Gym',
-      type: 'many-to-one',
-      joinColumn: true,
-    },
     currentGym: {
       target: 'Gym',
       type: 'many-to-one',

@@ -13,16 +13,26 @@ router.get('/all', async (req, res, next) => {
   return res.status(200).json(gyms.map(gym => ({ id: gym.id, name: gym.name, city: gym.city })));
 });
 
+router.get('/mine', withAuth, async (req, res, next) => {
+  const userRepository = getConnection().getRepository('User');
+
+  const user = await userRepository.findOne({ where: { email: req.email }, relations: ['gyms'] });
+  console.log(user);
+  if (!user || !user.gyms || user.gyms.length === 0) {
+    return res.status(400).json();
+  }
+
+  return res.status(200).json(user.gyms);
+});
+
 router.get('/details', withAuth, async (req, res, next) => {
-  console.log(111);
   const userRepository = getConnection().getRepository('User');
 
   const user = await userRepository.findOne({ where: { email: req.email }, relations: ['currentGym'] });
-  if (!user || !user.currentGym) {
-    return res.status(400);
-  }
 
-  console.log(user);
+  if (!user || !user.currentGym) {
+    return res.status(400).json();
+  }
 
   return res.status(200).json(user.currentGym);
 });
