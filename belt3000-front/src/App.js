@@ -14,6 +14,7 @@ import PrivateRoute from './components/PrivateRoute';
 import { ChakraProvider } from '@chakra-ui/react';
 import Header from './components/Header';
 import Navbar from './components/Navbar';
+import AddAdmin from './views/AddAdmin';
 
 let logoutTimer;
 
@@ -74,6 +75,7 @@ const App = () => {
               <PrivateRoute path="/competitors" component={Competitors} />
               <PrivateRoute path="/add-competitor/:competitorId?" component={AddCompetitor} />
               <PrivateRoute path="/add-nomination/:competitorId" component={AddNomination} />
+              <PrivateRoute path="/add-admin" component={AddAdmin} />
               <PrivateRoute exact path="/" component={Home} />
               <Route path="/login-admin" component={Login} />
               <Route path="/register-admin" component={RegisterAdmin} />

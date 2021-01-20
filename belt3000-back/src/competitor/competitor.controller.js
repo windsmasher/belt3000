@@ -4,11 +4,23 @@ const { validateAddCompetitor } = require('./addCompetitor.middleware');
 const withAuth = require('../auth/auth.middleware');
 const { getConnection, Not, IsNull } = require('typeorm');
 
+const getCurrentGym = async (req, res, userRepository) => {
+  const user = await userRepository.findOne({ where: { email: req.email }, relations: ['currentGym'] });
+
+  if (!user || !user.currentGym) {
+    return res.status(400).json();
+  }
+  return user.currentGym;
+};
+
 router.get('/all', withAuth, async (req, res) => {
   const userRepository = getConnection().getRepository('User');
-  const competitors = await userRepository.find({ belt: Not(IsNull()) });
+  const currentGym = await getCurrentGym(req, res, userRepository);
 
-  return res.status(200).json(competitors);
+  const competitors = await userRepository.find({ where: { belt: Not(IsNull()) }, relations: ['gyms'] });
+  const competitrsByGym = competitors.filter(competitor => competitor.gyms.map(gym => gym.id).includes(currentGym.id));
+
+  return res.status(200).json(competitrsByGym);
 });
 
 router.get('/one/:id', withAuth, async (req, res) => {
@@ -16,7 +28,12 @@ router.get('/one/:id', withAuth, async (req, res) => {
   if (!req || !req.params || !req.params.id) {
     return res.status(400).json('Invalid param.');
   }
-  const competitor = await userRepository.findOne({ id: req.params.id });
+  const competitor = await userRepository.findOne({ where: { id: req.params.id }, relations: ['gyms'] });
+  const currentGym = await getCurrentGym(req, res, userRepository);
+
+  if (!competitor.gyms.map(gym => gym.id).includes(currentGym.id)) {
+    return res.status(400).json();
+  }
 
   return res.status(200).json(competitor);
 });
@@ -28,7 +45,14 @@ router.delete('/:id', withAuth, async (req, res) => {
     return res.status(400).json('Invalid param.');
   }
 
-  const user = await userRepository.findOne({ id: req.params.id });
+  const user = await userRepository.findOne({ where: { id: req.params.id }, relations: ['gyms'] });
+
+  const currentGym = await getCurrentGym(req, res, userRepository);
+
+  if (!user.gyms.map(gym => gym.id).includes(currentGym.id)) {
+    return res.status(400).json();
+  }
+
   const nominations = await nominationRepository.find({
     where: { nominatedPerson: { id: req.params.id } },
     relations: ['nominatedPerson'],
@@ -46,7 +70,14 @@ router.patch('/:id', withAuth, validateAddCompetitor, async (req, res, next) => 
     return res.status(400).json('Invalid param.');
   }
 
-  const competitor = await userRepository.findOne({ id: req.params.id });
+  const competitor = await userRepository.findOne({ where: { id: req.params.id }, relations: ['gyms'] });
+
+  const currentGym = await getCurrentGym(req, res, userRepository);
+
+  if (!competitor.gyms.map(gym => gym.id).includes(currentGym.id)) {
+    return res.status(400).json();
+  }
+
   competitor.firstname = req.body.firstname;
   competitor.lastname = req.body.lastname;
   competitor.isAdult = Boolean(req.body.isAdult);
@@ -64,12 +95,15 @@ router.patch('/:id', withAuth, validateAddCompetitor, async (req, res, next) => 
 
 router.post('/add', withAuth, validateAddCompetitor, async (req, res, next) => {
   const userRepository = getConnection().getRepository('User');
+  const currentGym = await getCurrentGym(req, res, userRepository);
+
   const newCompetitor = userRepository.create({
     firstname: req.body.firstname,
     lastname: req.body.lastname,
     isAdult: Boolean(req.body.isAdult),
     belt: req.body.belt,
     stripes: Number(req.body.stripes),
+    gyms: [currentGym],
   });
 
   try {

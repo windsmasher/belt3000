@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Config } from '../config/config';
 import { AuthContext } from '../context';
-import { useToast, Box, Stat, StatNumber, StatLabel, Heading, Stack, Text, Select } from '@chakra-ui/react';
+import { useToast, Box, Stat, StatNumber, StatLabel, Heading, Stack, Text, Select, Flex } from '@chakra-ui/react';
 import ButtonComponent from '../components/ButtonComponent';
 
 const Home = () => {
@@ -89,7 +89,7 @@ const Home = () => {
       });
     }
   };
-
+  const restGymsLength = mineGyms.filter(gym => gym.id !== gymDetails.id).length;
   return (
     <Stack
       justify={['center', 'space-between', 'flex-end', 'flex-end']}
@@ -102,7 +102,14 @@ const Home = () => {
           <Heading mb={8}>
             Aktywny klub <Text color="blue.500">{gymDetails.name}</Text>
           </Heading>
-          {mineGyms.filter(gym => gym.id !== gymDetails.id).length > 0 ? (
+          {restGymsLength === 0 ? null : restGymsLength === 1 ? (
+            <Flex mb={8} justify="flex-start">
+              <ButtonComponent
+                msg={`Przełącz na ${mineGyms.find(gym => gym.id !== gymDetails.id).name}`}
+                onClick={updateCurrentGym}
+              />
+            </Flex>
+          ) : (
             <Box mb={8}>
               <Heading mb={8}>Przełącz na inny klub</Heading>
               <Stack
@@ -121,7 +128,7 @@ const Home = () => {
                 <ButtonComponent msg="Przełącz" onClick={updateCurrentGym} />
               </Stack>
             </Box>
-          ) : null}
+          )}
         </Box>
         <Box>
           <Heading mb={8}>Aktualności</Heading>

@@ -5,6 +5,7 @@ import { AuthContext } from '../context';
 import { useHistory } from 'react-router-dom';
 import SpinnerComponent from '../components/Spinner';
 import ButtonComponent from '../components/ButtonComponent';
+import NoDataMsg from '../components/NoDataMsg';
 
 const Nominations = () => {
   const [nominations, setNominations] = useState([]);
@@ -155,7 +156,11 @@ const Nominations = () => {
         )}
       </Stack>
       <Box>
-        {nominationsDownloaded ? (
+        {!nominationsDownloaded ? (
+          <SpinnerComponent />
+        ) : nominations.length === 0 ? (
+          <NoDataMsg msg="Brak nominacji" />
+        ) : (
           <Table>
             <Thead>
               <Tr>
@@ -168,8 +173,6 @@ const Nominations = () => {
             </Thead>
             <Tbody>{nominationList}</Tbody>
           </Table>
-        ) : (
-          <SpinnerComponent />
         )}
       </Box>
     </Box>

@@ -6,6 +6,7 @@ import { Table, Thead, Tbody, Tr, Th, Td, useToast, Stack, Box, Link, Flex } fro
 import SpinnerComponent from '../components/Spinner';
 import ButtonComponent from '../components/ButtonComponent';
 import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
+import NoDataMsg from '../components/NoDataMsg';
 
 const Competitors = () => {
   const authContext = useContext(AuthContext);
@@ -99,7 +100,11 @@ const Competitors = () => {
         <ButtonComponent type="common" msg="Dodaj zawodnika" onClick={() => history.push('/add-competitor')} />
       </Stack>
       <Box>
-        {competitorsDownloaded ? (
+        {!competitorsDownloaded ? (
+          <SpinnerComponent />
+        ) : competitors.length === 0 ? (
+          <NoDataMsg msg="Brak dodanych zawodników" />
+        ) : (
           <Table>
             <Thead>
               <Tr>
@@ -115,8 +120,6 @@ const Competitors = () => {
             </Thead>
             <Tbody>{competitorsList}</Tbody>
           </Table>
-        ) : (
-          <SpinnerComponent />
         )}
       </Box>
     </Box>

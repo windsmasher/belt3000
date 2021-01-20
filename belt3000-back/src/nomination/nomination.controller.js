@@ -3,13 +3,13 @@ const router = express.Router();
 const { validateAddNomination } = require('./addNomination.middleware');
 const utils = require('./nomination.utils');
 const { getConnection } = require('typeorm');
-const { isBefore } = require('date-fns');
+const { isBefore, isEqual } = require('date-fns');
 
 router.post('/add/:competitorId', validateAddNomination, async (req, res, next) => {
   const nominationRepository = getConnection().getRepository('Nomination');
   const userRepository = getConnection().getRepository('User');
 
-  if (!req || !req.params || !req.params.competitorId) {
+  if (!req?.params?.competitorId) {
     return res.status(400).json('Invalid param.');
   }
 
@@ -24,8 +24,20 @@ router.post('/add/:competitorId', validateAddNomination, async (req, res, next) 
     order: { date: 'DESC' },
   });
 
-  if (lastNomination && isBefore(new Date(req.body.date), new Date(lastNomination.date))) {
+  const requestDate = new Date(req.body.date);
+  const lastNominationDate = new Date(lastNomination?.date);
+
+  if (lastNominationDate && isBefore(requestDate, lastNominationDate)) {
     return res.status(500).json({ errorMsg: 'Data nie może być wcześniejsza od ostatniej daty nominacji' });
+  }
+
+  if (
+    lastNomination &&
+    requestDate.getFullYear() === lastNominationDate.getFullYear() &&
+    requestDate.getMonth() === lastNominationDate.getMonth() &&
+    requestDate.getDate() === lastNominationDate.getDate()
+  ) {
+    return res.status(500).json({ errorMsg: 'Data nie może być równa dacie ostatniej nominacji' });
   }
 
   if (lastBeltNomination && lastBeltNomination.nominationLevel === 'czarny' && Number(req.body.nominationType) === 0) {
@@ -156,17 +168,22 @@ router.delete('/previous/:competitorId', async (req, res, next) => {
 
   const competitor = await userRepository.findOne({ id: req.params.competitorId });
 
-  const nominationToDelete = await nominationRepository.findOne({
+  const nominations = await nominationRepository.find({
     where: { nominatedPerson: { id: req.params.competitorId } },
     relations: ['nominatedPerson'],
     order: { date: 'DESC' },
   });
+  const nominationToDelete = nominations[0];
+  const lastAfterDelete = nominations[1];
 
   if (nominationToDelete.nominationType === 0) {
     const previousBelt = utils.lowerBelt(nominationToDelete.nominationLevel, competitor.isAdult);
     competitor.belt = previousBelt;
     if (previousBelt === 'zielony') {
       competitor.isAdult = false;
+    }
+    if (lastAfterDelete && lastAfterDelete.nominationType !== 0) {
+      competitor.stripes = lastAfterDelete.nominationType;
     }
   } else {
     competitor.stripes -= Number(nominationToDelete.nominationType);
@@ -178,6 +195,7 @@ router.delete('/previous/:competitorId', async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
+
   return res.status(200).json();
 });
 

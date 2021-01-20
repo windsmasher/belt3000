@@ -42,6 +42,9 @@ const Navbar = () => {
         <MenuItem isLink={true} to="/nominations">
           Nominacje
         </MenuItem>
+        <MenuItem isLink={true} to="/add-admin">
+          Trenerzy
+        </MenuItem>
         <MenuItem isLink={false} onClick={() => authContext.logout()}>
           Wyloguj się
         </MenuItem>

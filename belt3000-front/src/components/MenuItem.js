@@ -17,6 +17,7 @@ const MenuItem = ({ children, to = '/', onClick, isLink }) => {
       textTransform="uppercase"
       _activeLink={{ textColor: 'gray.100' }}
       _active={{ transform: 'scale(.9)' }}
+      exact={true}
     >
       <Box _hover={{ color: 'white', textDecoration: 'none' }} p={3} borderRadius={10}>
         {TextOfMenuItem}
