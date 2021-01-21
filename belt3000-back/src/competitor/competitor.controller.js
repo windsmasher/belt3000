@@ -17,7 +17,7 @@ router.get('/all', withAuth, async (req, res) => {
   const userRepository = getConnection().getRepository('User');
   const currentGym = await getCurrentGym(req, res, userRepository);
 
-  const competitors = await userRepository.find({ where: { belt: Not(IsNull()) }, relations: ['gyms'] });
+  const competitors = await userRepository.find({ where: { belt: Not(IsNull()) }, relations: ['gyms'], role: 0 });
   const competitrsByGym = competitors.filter(competitor => competitor.gyms.map(gym => gym.id).includes(currentGym.id));
 
   return res.status(200).json(competitrsByGym);

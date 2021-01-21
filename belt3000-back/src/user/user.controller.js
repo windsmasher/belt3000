@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const { getConnection } = require('typeorm');
 const withAuth = require('../auth/auth.middleware');
+const validateAddAdmin = require('./addAdmin.middleware');
 
 router.patch('/currentGym/:gymId', withAuth, async (req, res, next) => {
-  if (!req || !req.params || !req.params.gymId) {
+  if (!req?.params?.gymId) {
     return res.status(400).json('Invalid param.');
   }
 
@@ -29,5 +30,7 @@ router.patch('/currentGym/:gymId', withAuth, async (req, res, next) => {
   await userRepository.save(user);
   return res.status(200).json(gym);
 });
+
+router.post('/add-admin', withAuth, validateAddAdmin, async (req, res, next) => {});
 
 module.exports = router;
