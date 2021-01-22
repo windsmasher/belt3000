@@ -1,16 +1,71 @@
-import React, { useState } from 'react';
-import { Text, Stack, Box, FormControl, Input, List, ListItem, Link } from '@chakra-ui/react';
+import React, { useState, useEffect, useContext } from 'react';
+import { Text, Stack, Box, FormControl, Input, List, ListItem, Link, useToast } from '@chakra-ui/react';
 import Subtitle from '../components/Subtitle';
 import ButtonComponent from '../components/ButtonComponent';
+import { Config } from '../config/config';
+import { AuthContext } from '../context';
 
 const AddAdmin = () => {
-  const [newAdmin, setNewAdmin] = useState({ email: '' });
-  const [adminsList, setAdminsList] = useState([
-    { email: 'jan@op.pl', generatedPassword: '123' },
-    { email: 'admin@op.pl', generatedPassword: '123' },
-  ]);
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [adminsList, setAdminsList] = useState([]);
+  const authContext = useContext(AuthContext);
+  const toast = useToast();
 
-  const handleAddAdmin = async () => {};
+  useEffect(() => {
+    fetchAdmins();
+  }, []);
+
+  const fetchAdmins = async () => {
+    try {
+      const response = await fetch(`${Config.API_URL}user/list-from-gym-except-me/`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', authorization: authContext.token },
+      });
+      const admins = await response.json();
+      setAdminsList(admins);
+    } catch (e) {
+      toast({
+        title: 'Wystąpił błąd.',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
+    }
+  };
+
+  const handleAddAdmin = async () => {
+    try {
+      const res = await fetch(`${Config.API_URL}user/add-admin/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', authorization: authContext.token },
+        body: JSON.stringify({ email: newAdminEmail }),
+      });
+      if (res.status !== 200) {
+        toast({
+          title: (await res?.json())?.errorMsg || 'Wystąpił błąd. Niepoprawne dane.',
+          status: 'error',
+          isClosable: true,
+          duration: 3000,
+        });
+      } else {
+        toast({
+          title: 'Zaproszono nowego trenera',
+          status: 'success',
+          isClosable: true,
+          duration: 3000,
+        });
+        setNewAdminEmail('');
+        await fetchAdmins();
+      }
+    } catch (e) {
+      toast({
+        title: 'Wystąpił błąd.',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
+    }
+  };
 
   return (
     <Box>
@@ -26,8 +81,8 @@ const AddAdmin = () => {
             type="email"
             name="email"
             label="Email"
-            defaultValue={newAdmin.email}
-            onChange={e => setNewAdmin({ ...newAdmin, email: e.target.value })}
+            defaultValue={newAdminEmail}
+            onChange={e => setNewAdminEmail(e.target.value)}
             placeholder="Tu wpisz email trenera"
           />
         </FormControl>
