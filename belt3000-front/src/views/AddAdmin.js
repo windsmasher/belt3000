@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Text, Stack, Box, FormControl, Input, List, ListItem, Link, useToast } from '@chakra-ui/react';
+import { Text, Stack, Box, FormControl, Input, List, ListItem, Link, useToast, Divider } from '@chakra-ui/react';
 import Subtitle from '../components/Subtitle';
 import ButtonComponent from '../components/ButtonComponent';
 import { Config } from '../config/config';
@@ -81,7 +81,7 @@ const AddAdmin = () => {
             type="email"
             name="email"
             label="Email"
-            defaultValue={newAdminEmail}
+            value={newAdminEmail}
             onChange={e => setNewAdminEmail(e.target.value)}
             placeholder="Tu wpisz email trenera"
           />
@@ -90,13 +90,12 @@ const AddAdmin = () => {
       </Stack>
       <Subtitle msg="Lista trenerów" />
       <List>
+        <Divider mb={5} />
         {adminsList.map(admin => (
           <ListItem mb={5}>
             <Text fontSize="2xl">E-MAIL: {admin.email}</Text>
-            <Text fontSize="2xl">WYGENEROWANE HASŁO: {admin.generatedPassword}</Text>
-            <Text fontSize="2xl" color="red.500">
-              <Link>Usuń trenera</Link>
-            </Text>
+            <Text fontSize="2xl">WYGENEROWANE HASŁO: {admin.generatedPassword ?? 'Użytkownik zmienił hasło'}</Text>
+            <Divider mb={5} mt={5} />
           </ListItem>
         ))}
       </List>

@@ -22,7 +22,7 @@ const Competitors = () => {
   const fetchAllCompetitors = async () => {
     try {
       const response = await fetch(`${Config.API_URL}competitor/all`, {
-        headers: { auThorization: authContext.token },
+        headers: { authorization: authContext.token },
       });
       const competitors = await response.json();
       setCompetitors(competitors);

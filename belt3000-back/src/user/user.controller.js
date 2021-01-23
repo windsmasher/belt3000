@@ -3,6 +3,7 @@ const router = express.Router();
 const { getConnection } = require('typeorm');
 const withAuth = require('../auth/auth.middleware');
 const { validateAddAdmin } = require('./addAdmin.middleware');
+const { validateNewPassword } = require('./newPassword.middleware');
 const bcrypt = require('bcrypt');
 
 router.patch('/currentGym/:gymId', withAuth, async (req, res, next) => {
@@ -77,19 +78,54 @@ router.post('/add-admin', withAuth, validateAddAdmin, async (req, res, next) => 
 
 router.get('/list-from-gym-except-me', withAuth, async (req, res, next) => {
   const userRepository = getConnection().getRepository('User');
-  const gymRepository = getConnection().getRepository('Gym');
 
   const userMe = await userRepository.findOne({ where: { email: req.email }, relations: ['currentGym'] });
   if (!userMe?.currentGym) {
     return res.status(400).json();
   }
 
-  const allUsers = await userRepository.find({ relations: ['gyms'] });
+  const allUsers = await userRepository.find({ where: { role: 0 }, relations: ['gyms'] });
   const usersFromGymExceptMe = allUsers.filter(
     user => user.id !== userMe.id && user.gyms.map(gym => gym.id).includes(userMe.currentGym.id),
   );
 
   return res.status(200).json(usersFromGymExceptMe);
+});
+
+router.patch('/new-password', withAuth, validateNewPassword, async (req, res, next) => {
+  const userRepository = getConnection().getRepository('User');
+  const userMe = await userRepository.findOne({ where: { email: req.email } });
+
+  const { oldPassword, newPassword1, newPassword2 } = req.body;
+
+  if (newPassword1 !== newPassword2) {
+    return res.status(400).json({ errorMsg: 'Nowe hasła nie są takie same.' });
+  }
+
+  try {
+    const passwordMatch = await bcrypt.compare(oldPassword, userMe.password);
+    if (passwordMatch === false) {
+      return res.status(401).json({
+        error: 'Incorrect old password.',
+      });
+    }
+  } catch (e) {
+    return next(e);
+  }
+
+  const newHashedPassword = await new Promise((resolve, reject) => {
+    bcrypt.hash(newPassword1, 10, (err, hash) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(hash);
+    });
+  });
+
+  userMe.password = newHashedPassword;
+  userMe.generatedPassword = null;
+  await userRepository.save(userMe);
+  return res.status(200).json();
 });
 
 module.exports = router;

@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { validateAddNomination } = require('./addNomination.middleware');
+const { validateEditDescription } = require('./editDescription.middleware');
 const utils = require('./nomination.utils');
 const { getConnection } = require('typeorm');
 const { isBefore, isEqual } = require('date-fns');
+const withAuth = require('../auth/auth.middleware');
 
 router.post('/add/:competitorId', validateAddNomination, async (req, res, next) => {
   const nominationRepository = getConnection().getRepository('Nomination');
@@ -162,7 +164,7 @@ router.get('/all', async (req, res, next) => {
 router.delete('/previous/:competitorId', async (req, res, next) => {
   const nominationRepository = getConnection().getRepository('Nomination');
   const userRepository = getConnection().getRepository('User');
-  if (!req || !req.params || !req.params.competitorId) {
+  if (!req?.params?.competitorId) {
     return res.status(400).json('Invalid param.');
   }
 
@@ -197,6 +199,21 @@ router.delete('/previous/:competitorId', async (req, res, next) => {
   }
 
   return res.status(200).json();
+});
+
+router.patch('/edit-description/:id', withAuth, validateEditDescription, async (req, res, next) => {
+  const nominationRepository = getConnection().getRepository('Nomination');
+  if (!req?.params?.id) {
+    return res.status(400).json('Invalid param.');
+  }
+
+  const nomination = await nominationRepository.findOne({ id: req.params.id });
+  if (!nomination) {
+    return res.status(400).json('No such object or id.');
+  }
+
+  nomination.description = req.body.description;
+  await nominationRepository.save(nomination);
 });
 
 module.exports = router;

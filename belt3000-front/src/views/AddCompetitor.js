@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Config } from '../config/config';
 import { useParams } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { AuthContext } from '../context';
 import { useToast, Box, FormLabel, FormControl, Input, Stack, Select } from '@chakra-ui/react';
 import ButtonComponent from '../components/ButtonComponent';
@@ -17,6 +18,7 @@ const AddCompetitor = () => {
   const { competitorId } = useParams();
   const authContext = useContext(AuthContext);
   const toast = useToast();
+  const history = useHistory();
 
   useEffect(() => {
     fetchCompetitor();
@@ -74,6 +76,7 @@ const AddCompetitor = () => {
           isClosable: true,
           duration: 3000,
         });
+        history.push('/competitors');
       }
     } catch (err) {
       toast({

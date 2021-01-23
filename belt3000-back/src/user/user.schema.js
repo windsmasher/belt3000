@@ -27,6 +27,7 @@ module.exports = new EntitySchema({
     },
     generatedPassword: {
       type: 'varchar',
+      default: null,
     },
     isAdult: {
       type: 'boolean',

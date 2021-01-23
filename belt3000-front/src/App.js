@@ -11,10 +11,11 @@ import AddNomination from './views/AddNomination';
 import Login from './views/Login';
 import { AuthContext } from './context';
 import PrivateRoute from './components/PrivateRoute';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import Header from './components/Header';
 import Navbar from './components/Navbar';
 import AddAdmin from './views/AddAdmin';
+import NewPassword from './views/NewPassword';
 
 let logoutTimer;
 
@@ -56,8 +57,18 @@ const App = () => {
     }
   }, [token, logout, tokenExpirationDate]);
 
+  const theme = extendTheme({
+    colors: {
+      brand: {
+        100: '#f7fafc',
+        900: '#1a202c',
+      },
+    },
+    breakpoints: ['30em', '48em', '62em', '80em'],
+  });
+
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <AuthContext.Provider
         value={{
           isLoggedIn: !!token,
@@ -76,6 +87,7 @@ const App = () => {
               <PrivateRoute path="/add-competitor/:competitorId?" component={AddCompetitor} />
               <PrivateRoute path="/add-nomination/:competitorId" component={AddNomination} />
               <PrivateRoute path="/add-admin" component={AddAdmin} />
+              <PrivateRoute path="/new-password" component={NewPassword} />
               <PrivateRoute exact path="/" component={Home} />
               <Route path="/login-admin" component={Login} />
               <Route path="/register-admin" component={RegisterAdmin} />

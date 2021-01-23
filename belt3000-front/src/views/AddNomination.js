@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useParams } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import { Config } from '../config/config';
 import { AuthContext } from '../context';
 import { useToast, Box, Stack, FormLabel, FormControl, Input, Select } from '@chakra-ui/react';
@@ -11,6 +12,7 @@ const AddNomination = () => {
   const { competitorId } = useParams();
   const authContext = useContext(AuthContext);
   const toast = useToast();
+  const history = useHistory();
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -35,6 +37,7 @@ const AddNomination = () => {
           duration: 3000,
           isClosable: true,
         });
+        history.push('/nominations');
       }
     } catch (e) {
       toast({

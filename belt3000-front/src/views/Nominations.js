@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Config } from '../config/config';
-import { Table, Thead, Tbody, Tr, Th, Td, Select, useToast, Stack, Box } from '@chakra-ui/react';
+import { Table, Thead, Tbody, Tr, Th, Td, Select, useToast, Stack, Box, Flex } from '@chakra-ui/react';
+import { EditIcon } from '@chakra-ui/icons';
 import { AuthContext } from '../context';
 import { useHistory } from 'react-router-dom';
 import SpinnerComponent from '../components/Spinner';
@@ -121,7 +122,12 @@ const Nominations = () => {
       <Td>{nom.person}</Td>
       <Td>{nom.nomination}</Td>
       <Td>{new Date(nom.date).toLocaleDateString()}</Td>
-      <Td>{nom.description}</Td>
+      <Td>
+        <Flex justifyItems="center">
+          {nom.description}
+          <EditIcon ml={5} w={5} h={5} />
+        </Flex>
+      </Td>
     </Tr>
   ));
 
