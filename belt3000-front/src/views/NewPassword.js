@@ -64,11 +64,7 @@ const NewPassword = () => {
   return (
     <Box>
       <Subtitle msg="Zmiana hasła" />
-      <Stack
-        justify={['center', 'space-between', 'flex-end', 'flex-end']}
-        direction={['column', 'row', 'row', 'row']}
-        mt={10}
-      >
+      <Stack direction="column" mt={10}>
         <FormControl size="md">
           <FormLabel>Stare hasło</FormLabel>
           <InputGroup>

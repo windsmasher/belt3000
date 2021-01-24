@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Config } from '../config/config';
-import { Table, Thead, Tbody, Tr, Th, Td, Select, useToast, Stack, Box, Flex } from '@chakra-ui/react';
+import { Table, Thead, Tbody, Tr, Th, Td, Select, useToast, Stack, Box, Flex, Input, Link } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { AuthContext } from '../context';
 import { useHistory } from 'react-router-dom';
@@ -13,6 +13,8 @@ const Nominations = () => {
   const [competitors, setCompetitors] = useState([]);
   const [selectedCompetitor, setSelectedCompetitor] = useState('all');
   const [nominationsDownloaded, setNominationsDownloaded] = useState(false);
+  const [isEditDescriptionId, setIsEditDescriptionId] = useState(null);
+  const [tempDescriptions, setTempDescriptions] = useState([]);
   const authContext = useContext(AuthContext);
   const history = useHistory();
   const toast = useToast();
@@ -45,8 +47,9 @@ const Nominations = () => {
       const response = await fetch(`${Config.API_URL}nomination/all`, {
         headers: { authorization: localStorage.getItem('token') },
       });
-      const nominations = await response.json();
-      setNominations(nominations);
+      const nominationsRes = await response.json();
+      setNominations(nominationsRes);
+      setTempDescriptions(nominationsRes.map(nomination => nomination.description));
       setNominationsDownloaded(true);
     } catch (err) {
       toast({
@@ -65,6 +68,7 @@ const Nominations = () => {
       });
       const nominationsByCompetitor = await response.json();
       setNominations(nominationsByCompetitor);
+      setTempDescriptions(nominationsByCompetitor.map(nomination => nomination.description));
     } catch (err) {
       toast({
         title: 'Błąd pobrania listy nominacji.',
@@ -116,17 +120,73 @@ const Nominations = () => {
     fetchAllNominations();
   };
 
+  const updateDescription = async (nominationId, description) => {
+    try {
+      const res = await fetch(`${Config.API_URL}nomination/edit-description/${nominationId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ description: description }),
+        headers: { 'Content-Type': 'application/json', authorization: authContext.token },
+      });
+      if (res.status !== 200) {
+        toast({
+          title: (await res?.json())?.errorMsg || 'Wystąpił błąd.',
+          status: 'error',
+          isClosable: true,
+          duration: 3000,
+        });
+      } else {
+        toast({
+          title: 'Poprawnie zaktualizowano opis.',
+          status: 'success',
+          isClosable: true,
+          duration: 3000,
+        });
+        setIsEditDescriptionId(null);
+        selectedCompetitor === 'all' ? fetchAllNominations() : fetchNominationsByCompetitor(selectedCompetitor);
+      }
+    } catch (err) {
+      toast({
+        title: 'Wystąpił błąd.',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
+    }
+  };
+
   const nominationList = nominations.map((nom, index) => (
-    <Tr>
+    <Tr key={index}>
       <Td>{index + 1}</Td>
       <Td>{nom.person}</Td>
       <Td>{nom.nomination}</Td>
       <Td>{new Date(nom.date).toLocaleDateString()}</Td>
       <Td>
-        <Flex justifyItems="center">
-          {nom.description}
-          <EditIcon ml={5} w={5} h={5} />
-        </Flex>
+        <Box>
+          <Box cursor="poiner" onClick={() => setIsEditDescriptionId(nom.id)}>
+            <Input
+              disabled={isEditDescriptionId !== nom.id}
+              name="description"
+              value={tempDescriptions[index]}
+              onChange={e =>
+                setTempDescriptions(tempDescriptions.map((desc, i) => (i === index ? e.target.value : desc)))
+              }
+            />
+          </Box>
+          {isEditDescriptionId === nom.id ? (
+            <Box mt={5}>
+              <Link onClick={() => updateDescription(nom.id, tempDescriptions[index])}>Zapisz</Link>
+              <Link
+                ml={5}
+                onClick={() => {
+                  setIsEditDescriptionId(null);
+                  setTempDescriptions(nominations.map(n => n.description));
+                }}
+              >
+                Anuluj
+              </Link>
+            </Box>
+          ) : null}
+        </Box>
       </Td>
     </Tr>
   ));

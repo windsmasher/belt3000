@@ -93,8 +93,14 @@ const AddAdmin = () => {
         <Divider mb={5} />
         {adminsList.map(admin => (
           <ListItem mb={5}>
-            <Text fontSize="2xl">E-MAIL: {admin.email}</Text>
-            <Text fontSize="2xl">WYGENEROWANE HASŁO: {admin.generatedPassword ?? 'Użytkownik zmienił hasło'}</Text>
+            <Box fontSize="xl">
+              <Text fontWeight="bold">E-MAIL:</Text>
+              <Text fontStyle="italic"> {admin.email}</Text>
+            </Box>
+            <Box fontSize="xl">
+              <Text fontWeight="bold">WYGENEROWANE HASŁO:</Text>
+              <Text fontStyle="italic">{admin.generatedPassword ?? 'Użytkownik zmienił hasło'}</Text>
+            </Box>
             <Divider mb={5} mt={5} />
           </ListItem>
         ))}

@@ -214,6 +214,7 @@ router.patch('/edit-description/:id', withAuth, validateEditDescription, async (
 
   nomination.description = req.body.description;
   await nominationRepository.save(nomination);
+  return res.status(200).json();
 });
 
 module.exports = router;

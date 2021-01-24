@@ -16,6 +16,7 @@ const Home = () => {
     fetchAllCompetitors();
     fetchGymDetails();
     fetchMineGyms();
+    return () => {};
   }, []);
 
   const fetchAllCompetitors = async () => {
@@ -91,23 +92,20 @@ const Home = () => {
   };
   const restGymsLength = mineGyms.filter(gym => gym.id !== gymDetails.id).length;
   return (
-    <Stack
-      justify={['center', 'space-between', 'flex-end', 'flex-end']}
-      direction={['column', 'row', 'row', 'row']}
-      spacing="15%"
-      p={20}
-    >
+    <Flex justify="space-around" mt={20}>
       <Box>
         <Box>
           <Heading mb={8}>
             Aktywny klub <Text color="blue.500">{gymDetails.name}</Text>
           </Heading>
           {restGymsLength === 0 ? null : restGymsLength === 1 ? (
-            <Flex mb={8} justify="flex-start">
-              <ButtonComponent
-                msg={`Przełącz na ${mineGyms.find(gym => gym.id !== gymDetails.id).name}`}
-                onClick={updateCurrentGym}
-              />
+            <Flex justify="start">
+              <Box mb={8}>
+                <ButtonComponent
+                  msg={`Przełącz na ${mineGyms.find(gym => gym.id !== gymDetails.id).name}`}
+                  onClick={updateCurrentGym}
+                />
+              </Box>
             </Flex>
           ) : (
             <Box mb={8}>
@@ -130,22 +128,8 @@ const Home = () => {
             </Box>
           )}
         </Box>
-        <Box>
-          <Heading mb={8}>Aktualności</Heading>
-        </Box>
-        <Box textAlign="justify">
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
-          aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-          Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni
-          dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit
-          amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam
-          aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit
-          laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea
-          voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla
-          pariatur
-        </Box>
       </Box>
-      <Box textAlign="right">
+      <Box textAlign="center">
         <Box>
           <Heading mb={8}>Statystyki</Heading>
         </Box>
@@ -162,7 +146,7 @@ const Home = () => {
           </Stat>
         </Box>
       </Box>
-    </Stack>
+    </Flex>
   );
 };
 
