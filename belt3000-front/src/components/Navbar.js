@@ -8,18 +8,8 @@ const Navbar = () => {
 
   return (
     <Flex
-      bgGradient={[
-        'white',
-        'linear(to-b, blue.300, pink.900)',
-        'linear(to-r, blue.300, pink.900)',
-        'linear(to-r, blue.300, pink.900)',
-      ]}
-      color={[
-        'black',
-        'linear(to-b, blue.300, pink.900)',
-        'linear(to-r, blue.300, pink.900)',
-        'linear(to-r, blue.300, pink.900)',
-      ]}
+      bgGradient={['white', 'white', 'linear(to-r, blue.300, pink.900)', 'linear(to-r, blue.300, pink.900)']}
+      color={['black', 'black', 'linear(to-r, blue.300, pink.900)', 'linear(to-r, blue.300, pink.900)']}
       p={5}
       mt={5}
       mb={5}
@@ -27,10 +17,10 @@ const Navbar = () => {
       justify="center"
     >
       <Stack
-        spacing={12}
+        spacing={[12, 12, 5, 12]}
         align="center"
-        justify={['center', 'space-between', 'flex-end', 'flex-end']}
-        direction={['column', 'row', 'row', 'row']}
+        justify={['center', 'center', 'flex-end', 'flex-end']}
+        direction={['column', 'column', 'row', 'row']}
         pt={[4, 4, 0, 0]}
       >
         <MenuItem isLink={true} to="/">

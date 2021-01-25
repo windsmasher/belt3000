@@ -11,7 +11,7 @@ const ButtonComponent = ({ msg, onClick, type }) => {
         bgGradient={gradient}
         _hover={{ bgGradient: gradient, color: 'white' }}
         onClick={onClick}
-        minWidth="200px"
+        minWidth="100px"
         _focus={{ boxShadow: 'none', outline: 'none' }}
         _active={{ bgGradient: activeGradient, color: 'white', transform: 'scale(.98)' }}
         alignItems="center"

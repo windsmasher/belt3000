@@ -64,7 +64,7 @@ const App = () => {
         900: '#1a202c',
       },
     },
-    breakpoints: ['30em', '48em', '62em', '80em'],
+    breakpoints: ['30em', '68em', '78em', '96em'],
   });
 
   return (

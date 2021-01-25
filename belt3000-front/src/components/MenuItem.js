@@ -19,7 +19,14 @@ const MenuItem = ({ children, to = '/', onClick, isLink }) => {
       _active={{ transform: 'scale(.9)' }}
       exact={true}
     >
-      <Box _hover={{ color: 'white', textDecoration: 'none' }} p={3} borderRadius={10}>
+      <Box
+        _hover={{ color: 'white', textDecoration: 'none' }}
+        p={3}
+        borderRadius={10}
+        bgGradient={['linear(to-r, blue.300, pink.900)', 'linear(to-r, blue.300, pink.900)', 'none', 'none']}
+        minWidth={[200, 200, 0, 0]}
+        textAlign="center"
+      >
         {TextOfMenuItem}
       </Box>
     </Link>
@@ -32,6 +39,9 @@ const MenuItem = ({ children, to = '/', onClick, isLink }) => {
       onClick={onClick}
       cursor="pointer"
       _active={{ transform: 'scale(.9)' }}
+      bgGradient={['linear(to-r, blue.300, pink.900)', 'linear(to-r, blue.300, pink.900)', 'none', 'none']}
+      minWidth={[200, 200, 0, 0]}
+      textAlign="center"
     >
       {TextOfMenuItem}
     </Box>

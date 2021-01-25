@@ -73,10 +73,10 @@ const AddAdmin = () => {
       <Stack
         justify={['center', 'space-between', 'flex-end', 'flex-end']}
         direction={['column', 'row', 'row', 'row']}
-        mb={5}
+        mb={10}
         mt={5}
       >
-        <FormControl size="md" isRequired>
+        <FormControl mb={5} size="md" isRequired>
           <Input
             type="email"
             name="email"

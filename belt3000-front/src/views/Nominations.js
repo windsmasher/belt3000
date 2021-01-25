@@ -193,7 +193,12 @@ const Nominations = () => {
 
   return (
     <Box>
-      <Stack direction="row" align="center" justify="center" mt={10} mb={10}>
+      <Stack
+        justify={['center', 'center', 'space-around', 'space-around']}
+        direction={['column', 'column', 'row', 'row']}
+        mt={10}
+        mb={10}
+      >
         <Select name="person" value={selectedCompetitor} onChange={handleNominationPerson}>
           <option value="all">Wszystkie</option>
           {competitors.map(person => (
@@ -202,24 +207,26 @@ const Nominations = () => {
             </option>
           ))}
         </Select>
-        {selectedCompetitor === 'all' ? (
-          <Box></Box>
-        ) : (
-          <Box>
-            <ButtonComponent
-              type="common"
-              msg="Dodaj nominacje"
-              onClick={() => history.push(`/add-nomination/${selectedCompetitor}`)}
-            />
-          </Box>
-        )}
-        {selectedCompetitor === 'all' || competitors.length === 0 ? (
-          <Box></Box>
-        ) : (
-          <Box>
-            <ButtonComponent type="common" msg="Usuń ostatnią nominacje" onClick={deletePreviousNomination} />
-          </Box>
-        )}
+        <Stack justify={'space-around'} direction={'row'}>
+          {selectedCompetitor === 'all' ? (
+            <Box></Box>
+          ) : (
+            <Box>
+              <ButtonComponent
+                type="common"
+                msg="Dodaj nominacje"
+                onClick={() => history.push(`/add-nomination/${selectedCompetitor}`)}
+              />
+            </Box>
+          )}
+          {selectedCompetitor === 'all' || competitors.length === 0 ? (
+            <Box></Box>
+          ) : (
+            <Box>
+              <ButtonComponent type="common" msg="Usuń ostatnią nominacje" onClick={deletePreviousNomination} />
+            </Box>
+          )}
+        </Stack>
       </Stack>
       <Box>
         {!nominationsDownloaded ? (

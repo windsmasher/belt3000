@@ -92,14 +92,18 @@ const Home = () => {
   };
   const restGymsLength = mineGyms.filter(gym => gym.id !== gymDetails.id).length;
   return (
-    <Flex justify="space-around" mt={20}>
-      <Box>
+    <Stack
+      justify={['center', 'center', 'space-around', 'space-around']}
+      direction={['column', 'column', 'row', 'row']}
+      mt={20}
+    >
+      <Box textAlign="center">
         <Box>
           <Heading mb={8}>
             Aktywny klub <Text color="blue.500">{gymDetails.name}</Text>
           </Heading>
           {restGymsLength === 0 ? null : restGymsLength === 1 ? (
-            <Flex justify="start">
+            <Flex justify="center">
               <Box mb={8}>
                 <ButtonComponent
                   msg={`Przełącz na ${mineGyms.find(gym => gym.id !== gymDetails.id).name}`}
@@ -146,7 +150,7 @@ const Home = () => {
           </Stat>
         </Box>
       </Box>
-    </Flex>
+    </Stack>
   );
 };
 

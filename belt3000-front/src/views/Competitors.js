@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Config } from '../config/config';
 import { AuthContext } from '../context';
 import { useHistory, NavLink } from 'react-router-dom';
-import { Table, Thead, Tbody, Tr, Th, Td, useToast, Stack, Box, Link, Flex } from '@chakra-ui/react';
+import { useToast, Stack, Box, Link, Flex, Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react';
 import SpinnerComponent from '../components/Spinner';
 import ButtonComponent from '../components/ButtonComponent';
 import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
@@ -111,7 +111,7 @@ const Competitors = () => {
                 <Th>Lp.</Th>
                 <Th>Imię</Th>
                 <Th>Nazwisko</Th>
-                <Th>Kategoria wiekowa</Th>
+                <Th>Wiek</Th>
                 <Th>Kolor pasa</Th>
                 <Th>Ilość belek</Th>
                 <Th>Edytuj</Th>
