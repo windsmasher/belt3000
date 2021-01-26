@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Config } from '../config/config';
-import { Table, Thead, Tbody, Tr, Th, Td, Select, useToast, Stack, Box, Flex, Input, Link } from '@chakra-ui/react';
-import { EditIcon } from '@chakra-ui/icons';
+import { useToast } from '@chakra-ui/react';
 import { AuthContext } from '../context';
-import { useHistory } from 'react-router-dom';
-import SpinnerComponent from '../components/Spinner';
-import ButtonComponent from '../components/ButtonComponent';
-import NoDataMsg from '../components/NoDataMsg';
+import NominationTable from '../components/NominationTable';
 
 const Nominations = () => {
   const [nominations, setNominations] = useState([]);
@@ -16,7 +12,6 @@ const Nominations = () => {
   const [isEditDescriptionId, setIsEditDescriptionId] = useState(null);
   const [tempDescriptions, setTempDescriptions] = useState([]);
   const authContext = useContext(AuthContext);
-  const history = useHistory();
   const toast = useToast();
 
   useEffect(() => {
@@ -154,101 +149,20 @@ const Nominations = () => {
     }
   };
 
-  const nominationList = nominations.map((nom, index) => (
-    <Tr key={index}>
-      <Td>{index + 1}</Td>
-      <Td>{nom.person}</Td>
-      <Td>{nom.nomination}</Td>
-      <Td>{new Date(nom.date).toLocaleDateString()}</Td>
-      <Td>
-        <Box>
-          <Box cursor="poiner" onClick={() => setIsEditDescriptionId(nom.id)}>
-            <Input
-              disabled={isEditDescriptionId !== nom.id}
-              name="description"
-              value={tempDescriptions[index]}
-              onChange={e =>
-                setTempDescriptions(tempDescriptions.map((desc, i) => (i === index ? e.target.value : desc)))
-              }
-            />
-          </Box>
-          {isEditDescriptionId === nom.id ? (
-            <Box mt={5}>
-              <Link onClick={() => updateDescription(nom.id, tempDescriptions[index])}>Zapisz</Link>
-              <Link
-                ml={5}
-                onClick={() => {
-                  setIsEditDescriptionId(null);
-                  setTempDescriptions(nominations.map(n => n.description));
-                }}
-              >
-                Anuluj
-              </Link>
-            </Box>
-          ) : null}
-        </Box>
-      </Td>
-    </Tr>
-  ));
-
   return (
-    <Box>
-      <Stack
-        justify={['center', 'center', 'space-around', 'space-around']}
-        direction={['column', 'column', 'row', 'row']}
-        mt={10}
-        mb={10}
-      >
-        <Select name="person" value={selectedCompetitor} onChange={handleNominationPerson}>
-          <option value="all">Wszystkie</option>
-          {competitors.map(person => (
-            <option key={person.id} value={person.id}>
-              {`${person.firstname} ${person.lastname}`}
-            </option>
-          ))}
-        </Select>
-        <Stack justify={'space-around'} direction={'row'}>
-          {selectedCompetitor === 'all' ? (
-            <Box></Box>
-          ) : (
-            <Box>
-              <ButtonComponent
-                type="common"
-                msg="Dodaj nominacje"
-                onClick={() => history.push(`/add-nomination/${selectedCompetitor}`)}
-              />
-            </Box>
-          )}
-          {selectedCompetitor === 'all' || competitors.length === 0 ? (
-            <Box></Box>
-          ) : (
-            <Box>
-              <ButtonComponent type="common" msg="Usuń ostatnią nominacje" onClick={deletePreviousNomination} />
-            </Box>
-          )}
-        </Stack>
-      </Stack>
-      <Box>
-        {!nominationsDownloaded ? (
-          <SpinnerComponent />
-        ) : nominations.length === 0 ? (
-          <NoDataMsg msg="Brak nominacji" />
-        ) : (
-          <Table>
-            <Thead>
-              <Tr>
-                <Th>Lp.</Th>
-                <Th>Osoba nominowana</Th>
-                <Th>Nominacja</Th>
-                <Th>Data</Th>
-                <Th>Opis</Th>
-              </Tr>
-            </Thead>
-            <Tbody>{nominationList}</Tbody>
-          </Table>
-        )}
-      </Box>
-    </Box>
+    <NominationTable
+      nominations={nominations}
+      competitors={competitors}
+      setIsEditDescriptionId={setIsEditDescriptionId}
+      isEditDescriptionId={isEditDescriptionId}
+      tempDescriptions={tempDescriptions}
+      setTempDescriptions={setTempDescriptions}
+      selectedCompetitor={selectedCompetitor}
+      handleNominationPerson={handleNominationPerson}
+      updateDescription={updateDescription}
+      deletePreviousNomination={deletePreviousNomination}
+      nominationsDownloaded={nominationsDownloaded}
+    />
   );
 };
 

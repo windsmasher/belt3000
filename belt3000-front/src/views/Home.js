@@ -100,13 +100,13 @@ const Home = () => {
       <Box textAlign="center">
         <Box>
           <Heading mb={8}>
-            Aktywny klub <Text color="blue.500">{gymDetails.name}</Text>
+            Aktywny klub <Text color="blue.500">{gymDetails.name?.toUpperCase()}</Text>
           </Heading>
           {restGymsLength === 0 ? null : restGymsLength === 1 ? (
             <Flex justify="center">
               <Box mb={8}>
                 <ButtonComponent
-                  msg={`Przełącz na ${mineGyms.find(gym => gym.id !== gymDetails.id).name}`}
+                  msg={`Przełącz na ${mineGyms.find(gym => gym.id !== gymDetails.id).name?.toUpperCase()}`}
                   onClick={updateCurrentGym}
                 />
               </Box>
@@ -123,7 +123,7 @@ const Home = () => {
                   {mineGyms
                     .filter(gym => gym.id !== gymDetails.id)
                     .map(gym => (
-                      <option value={gym.id}>{gym.name}</option>
+                      <option value={gym.id}>{gym.name?.toUpperCase()}</option>
                     ))}
                 </Select>
 

@@ -64,6 +64,18 @@ const App = () => {
         900: '#1a202c',
       },
     },
+    components: {
+      Text: {
+        baseStyle: {
+          // fontWeight: '1000',
+        },
+      },
+      Table: {
+        baseStyle: {
+          variant: 'striped',
+        },
+      },
+    },
     breakpoints: ['30em', '68em', '78em', '96em'],
   });
 
