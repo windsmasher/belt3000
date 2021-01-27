@@ -92,7 +92,7 @@ const App = () => {
         <ErrorBoundary>
           <Router>
             <Header />
-            {!!token ? <Navbar /> : null}
+            <PrivateRoute component={Navbar} />
             <Switch>
               <PrivateRoute path="/nominations" component={Nominations} />
               <PrivateRoute path="/competitors" component={Competitors} />

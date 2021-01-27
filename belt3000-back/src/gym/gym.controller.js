@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { validateNewGymWithAccount } = require('./newGymWithAccount.middleware');
-const { validateNewGymWithExistingAccount } = require('./newGymWithExistingAccount.middleware');
+const { validateRequestForNewGym } = require('./requestForNewGym.middleware');
 const withAuth = require('../auth/auth.middleware');
 const bcrypt = require('bcrypt');
 const { getConnection } = require('typeorm');
@@ -84,6 +84,63 @@ router.post('/new-gym-with-new-account', validateNewGymWithAccount, async (req, 
     return next(e.toString());
   }
   return res.status(201).json(newGym);
+});
+
+router.post('/request-for-new-gym', withAuth, validateRequestForNewGym, async (req, res, next) => {
+  const userRepository = getConnection().getRepository('User');
+  const gymRepository = getConnection().getRepository('Gym');
+
+  const { name } = req.body;
+
+  const user = await userRepository.findOne({ where: { email: req.email }, relations: ['gyms'] });
+  if (!user || !user.gyms) {
+    return res.status(400).json();
+  }
+
+  if (user.gyms.length >= 3) {
+    return res.status(400).json({ errorMsg: 'Nie można posiadać więcej niż 3 kluby.' });
+  }
+
+  let newGym = null;
+  try {
+    newGym = await gymRepository.save({
+      name: name,
+      isAccepted: false,
+      mainAdmin: user,
+      users: [user],
+    });
+  } catch (e) {
+    return next(e.toString());
+  }
+  return res.status(200).json(newGym);
+});
+
+router.delete('/remove-not-accepted/:id', withAuth, async (req, res, next) => {
+  if (!req?.params?.id) {
+    return res.status(400).json('Invalid param.');
+  }
+
+  const userRepository = getConnection().getRepository('User');
+  const gymRepository = getConnection().getRepository('Gym');
+
+  const userMe = await userRepository.findOne({ where: { email: req.email }, relations: ['gyms'] });
+  if (!userMe || !userMe.gyms) {
+    return res.status(400).json();
+  }
+
+  const gym = await gymRepository.findOne({ where: { id: req.params.id } });
+  if (!gym) {
+    return res.status(400).json();
+  }
+  if (!userMe.gyms.map(gym => gym.id).includes(gym.id)) {
+    return res.status(400).json({ errorMsg: 'Ten klub nie należy do Twoich klubów.' });
+  }
+  if (gym.isAccepted === true) {
+    return res.status(400).json({ errorMsg: 'Nie można usunąć zaakceptowanego klubu.' });
+  }
+
+  await gymRepository.remove(gym);
+  return res.status(200).json();
 });
 
 module.exports = router;

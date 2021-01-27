@@ -27,6 +27,9 @@ router.patch('/currentGym/:gymId', withAuth, async (req, res, next) => {
   if (!user.gyms.map(gym => gym.id).includes(gym.id)) {
     return res.status(400).json({ errorMsg: 'Ten klub nie należy do Twoich klubów.' });
   }
+  if (gym.isAccepted === false) {
+    return res.status(400).json({ errorMsg: 'Ten klub nie został jeszcze zaakceptowany przez administracje.' });
+  }
 
   user.currentGym = gym;
   await userRepository.save(user);

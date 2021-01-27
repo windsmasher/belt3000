@@ -36,55 +36,63 @@ const CompetitorTable = ({ competitors, handleDelete, competitorsDownloaded }) =
     </Tr>
   ));
 
-  return isTable ? (
+  return (
     <Box>
       <Stack justify="center" mt={10} mb={10}>
         <ButtonComponent type="common" msg="Dodaj zawodnika" onClick={() => history.push('/add-competitor')} />
       </Stack>
-      <Box>
-        {!competitorsDownloaded ? (
-          <SpinnerComponent />
-        ) : competitors.length === 0 ? (
-          <NoDataMsg msg="Brak dodanych zawodników" />
-        ) : (
-          <Table>
-            <Thead>
-              <Tr>
-                <Th>Lp.</Th>
-                <Th>Imię</Th>
-                <Th>Nazwisko</Th>
-                <Th>Wiek</Th>
-                <Th>Kolor pasa</Th>
-                <Th>Ilość belek</Th>
-                <Th>Edytuj</Th>
-                <Th>Usuń</Th>
-              </Tr>
-            </Thead>
-            <Tbody>{competitorTableRows}</Tbody>
-          </Table>
-        )}
-      </Box>
-    </Box>
-  ) : (
-    <Flex direction="column" align="center" textAlign="center">
-      {competitors.map((comp, index) => (
-        <Box mb="15">
-          <Text fontSize="xl">
-            {comp.firstname} {comp.lastname}
-          </Text>
-          <Text>{Boolean(comp.isAdult) === true ? 'Dorosły' : 'U18'}</Text>
-          <Text>
-            {comp.belt} (belki: {comp.stripes})
-          </Text>
-          <Link as={NavLink} to={`/add-competitor/${comp.id}`}>
-            <EditIcon w={5} h={5} />
-          </Link>
-          <Link href="#" onClick={() => handleDelete(comp.id)}>
-            <DeleteIcon w={5} h={5} />
-          </Link>
+      {!competitorsDownloaded ? (
+        <SpinnerComponent />
+      ) : competitors.length === 0 ? (
+        <NoDataMsg msg="Brak dodanych zawodników" />
+      ) : isTable ? (
+        <Box>
+          <Box>
+            {!competitorsDownloaded ? (
+              <SpinnerComponent />
+            ) : competitors.length === 0 ? (
+              <NoDataMsg msg="Brak dodanych zawodników" />
+            ) : (
+              <Table>
+                <Thead>
+                  <Tr>
+                    <Th>Lp.</Th>
+                    <Th>Imię</Th>
+                    <Th>Nazwisko</Th>
+                    <Th>Wiek</Th>
+                    <Th>Kolor pasa</Th>
+                    <Th>Ilość belek</Th>
+                    <Th>Edytuj</Th>
+                    <Th>Usuń</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>{competitorTableRows}</Tbody>
+              </Table>
+            )}
+          </Box>
         </Box>
-      ))}
-    </Flex>
+      ) : (
+        <Flex direction="column" align="center" textAlign="center">
+          {competitors.map((comp, index) => (
+            <Box mb="15">
+              <Text fontSize="xl">
+                {comp.firstname} {comp.lastname}
+              </Text>
+              <Text>{Boolean(comp.isAdult) === true ? 'Dorosły' : 'U18'}</Text>
+              <Text>
+                {comp.belt} (belki: {comp.stripes})
+              </Text>
+              <Link as={NavLink} to={`/add-competitor/${comp.id}`}>
+                <EditIcon w={5} h={5} />
+              </Link>
+              <Link href="#" onClick={() => handleDelete(comp.id)}>
+                <DeleteIcon w={5} h={5} />
+              </Link>
+            </Box>
+          ))}
+        </Flex>
+      )}
+    </Box>
   );
 };
 

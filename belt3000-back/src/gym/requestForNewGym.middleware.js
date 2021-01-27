@@ -1,6 +1,6 @@
 const { body, validationResult } = require('express-validator');
 
-exports.validateNewGymWithExistingAccount = [
+exports.validateRequestForNewGym = [
   body('name', 'name of gym is required').not().isEmpty(),
   (req, res, next) => {
     const errors = validationResult(req);

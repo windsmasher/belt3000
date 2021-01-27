@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Config } from '../config/config';
 import { AuthContext } from '../context';
-import { useToast, Box, Stat, StatNumber, StatLabel, Heading, Stack, Text, Select, Flex } from '@chakra-ui/react';
+import { useToast, Box, Heading, Stack, Text, Select, Flex } from '@chakra-ui/react';
 import ButtonComponent from '../components/ButtonComponent';
+import NewGymRequest from '../components/NewGymRequest';
+import Statistics from '../components/Statistics';
+import NotAcceptedGymList from '../components/NotAcceptedGymList';
 
 const Home = () => {
-  const [competitors, setCompetitors] = useState([]);
   const [gymDetails, setGymDetails] = useState({ id: '', name: '', city: '' });
   const [mineGyms, setMineGyms] = useState([]);
   const [gymToChangeId, setGymToChangeId] = useState(null);
@@ -13,29 +15,10 @@ const Home = () => {
   const toast = useToast();
 
   useEffect(() => {
-    fetchAllCompetitors();
     fetchGymDetails();
     fetchMineGyms();
     return () => {};
   }, []);
-
-  const fetchAllCompetitors = async () => {
-    try {
-      const response = await fetch(`${Config.API_URL}competitor/all`, {
-        headers: { authorization: authContext.token },
-      });
-      const competitors = await response.json();
-      setCompetitors(competitors);
-    } catch (err) {
-      toast({
-        title: 'Wystąpił błąd.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-      console.log(`Competitors fetch error: ${err}`);
-    }
-  };
 
   const fetchGymDetails = async () => {
     try {
@@ -75,12 +58,20 @@ const Home = () => {
   const updateCurrentGym = async () => {
     console.log(gymToChangeId);
     try {
-      await fetch(`${Config.API_URL}user/currentGym/${gymToChangeId}`, {
+      const res = await fetch(`${Config.API_URL}user/currentGym/${gymToChangeId}`, {
         headers: { authorization: authContext.token },
         method: 'PATCH',
       });
       await fetchMineGyms();
       await fetchGymDetails();
+      if (res.status !== 200) {
+        toast({
+          title: (await res?.json())?.errorMsg || 'Wystąpił błąd',
+          status: 'error',
+          isClosable: true,
+          duration: 3000,
+        });
+      }
     } catch (err) {
       toast({
         title: 'Wystąpił błąd.',
@@ -90,13 +81,15 @@ const Home = () => {
       });
     }
   };
-  const restGymsLength = mineGyms.filter(gym => gym.id !== gymDetails.id).length;
+  const restGymsLength = mineGyms.filter(gym => gym.id !== gymDetails.id && gym.isAccepted === true).length;
+  const gymsNotAccepted = mineGyms.filter(gym => gym.isAccepted === false);
   return (
     <Stack
       justify={['center', 'center', 'space-around', 'space-around']}
       direction={['column', 'column', 'row', 'row']}
       mt={20}
     >
+      <NotAcceptedGymList gymsNotAccepted={gymsNotAccepted} fetchGyms={fetchMineGyms} />
       <Box textAlign="center">
         <Box>
           <Heading mb={8}>
@@ -131,25 +124,10 @@ const Home = () => {
               </Stack>
             </Box>
           )}
+          <NewGymRequest fetchGyms={fetchMineGyms} />
         </Box>
       </Box>
-      <Box textAlign="center">
-        <Box>
-          <Heading mb={8}>Statystyki</Heading>
-        </Box>
-        <Box>
-          <Stat mb={5}>
-            <StatLabel>Łączna liczba zawodników</StatLabel>
-            <StatNumber>{competitors?.length || 0}</StatNumber>
-          </Stat>
-        </Box>
-        <Box>
-          <Stat>
-            <StatLabel>Łączna liczba nominacji</StatLabel>
-            <StatNumber>{competitors?.reduce((prev, curr) => prev + curr.nomination?.length, 0) || 0}</StatNumber>
-          </Stat>
-        </Box>
-      </Box>
+      <Statistics />
     </Stack>
   );
 };
