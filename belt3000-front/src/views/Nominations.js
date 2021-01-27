@@ -40,7 +40,7 @@ const Nominations = () => {
   const fetchAllNominations = async () => {
     try {
       const response = await fetch(`${Config.API_URL}nomination/all`, {
-        headers: { authorization: localStorage.getItem('token') },
+        headers: { authorization: authContext.token },
       });
       const nominationsRes = await response.json();
       setNominations(nominationsRes);

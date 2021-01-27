@@ -137,16 +137,27 @@ router.get('/by-competitor/:competitorId', async (req, res, next) => {
   }
 });
 
-router.get('/all', async (req, res, next) => {
+router.get('/all', withAuth, async (req, res, next) => {
   const nominationRepository = getConnection().getRepository('Nomination');
+  const userRepository = getConnection().getRepository('User');
   try {
     const nominations = await nominationRepository.find({ relations: ['nominatedPerson'] });
     if (!nominations || nominations.length === 0) {
       return res.status(200).json([]);
     }
 
+    const userMe = await userRepository.findOne({ where: { email: req.email }, relations: ['currentGym'] });
+    const currentGym = userMe?.currentGym;
+    if (!userMe || !currentGym) {
+      return res.status(400).json();
+    }
+
+    const allUsers = await userRepository.find({ relations: ['gyms'] });
+    const gymUsers = allUsers.filter(u => u.gyms.map(gym => gym.id).includes(currentGym.id));
+
     return res.status(200).json(
       nominations
+        .filter(n => gymUsers.map(u => u.id).includes(n.nominatedPerson.id))
         .map(n => ({
           id: n.id,
           nomination: n.nominationLevel,
