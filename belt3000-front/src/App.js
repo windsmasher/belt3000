@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Competitors from './views/Competitors';
 import Home from './views/Home';
@@ -17,59 +17,29 @@ import Navbar from './components/Navbar';
 import AddAdmin from './views/AddAdmin';
 import NewPassword from './views/NewPassword';
 
-let logoutTimer;
-
 const App = () => {
-  const [token, setToken] = useState(false);
-  const [tokenExpirationDate, setTokenExpirationDate] = useState();
+  const [token, setToken] = useState(null);
 
-  const login = useCallback((token, expirationTime) => {
-    setToken(token);
-    const expiration = expirationTime || new Date(new Date().getTime() + 1000 * 60 * 60);
-    setTokenExpirationDate(expiration);
-    localStorage.setItem(
-      'userData',
-      JSON.stringify({
-        token,
-        expirationTime: expiration.toISOString(),
-      }),
-    );
+  useEffect(() => {
+    login();
   }, []);
 
-  const logout = useCallback(() => {
+  const login = dataToken => {
+    const authData = dataToken || JSON.parse(localStorage.getItem('userData'));
+
+    if (authData) {
+      setToken(authData.token);
+      localStorage.setItem('userData', JSON.stringify({ token: authData.token }));
+    }
+  };
+
+  const logout = () => {
     setToken(null);
     localStorage.removeItem('userData');
-  }, []);
-
-  useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('userData'));
-    if (storedData && storedData.token && new Date(storedData.expirationTime) > new Date()) {
-      login(storedData.token, new Date(storedData.expirationTime));
-    }
-  }, [login]);
-
-  useEffect(() => {
-    if (token && tokenExpirationDate) {
-      const remainingTime = tokenExpirationDate.getTime() - new Date().getTime();
-      logoutTimer = setTimeout(logout, remainingTime);
-    } else {
-      clearTimeout(logoutTimer);
-    }
-  }, [token, logout, tokenExpirationDate]);
+  };
 
   const theme = extendTheme({
-    colors: {
-      brand: {
-        100: '#f7fafc',
-        900: '#1a202c',
-      },
-    },
     components: {
-      Text: {
-        baseStyle: {
-          // fontWeight: '1000',
-        },
-      },
       Table: {
         baseStyle: {
           variant: 'striped',
@@ -92,7 +62,8 @@ const App = () => {
         <ErrorBoundary>
           <Router>
             <Header />
-            <PrivateRoute component={Navbar} />
+            {/* <PrivateRoute component={Navbar} /> */}
+            {!!token ? <Navbar /> : null}
             <Switch>
               <PrivateRoute path="/nominations" component={Nominations} />
               <PrivateRoute path="/competitors" component={Competitors} />

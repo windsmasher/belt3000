@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Config } from '../config/config';
 import { NavLink, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context';
@@ -25,6 +25,12 @@ const Login = () => {
   const history = useHistory();
   const toast = useToast();
 
+  useEffect(() => {
+    if (authContext.isLoggedIn) {
+      history.push('/');
+    }
+  }, []);
+
   const handleShowPassword = () => setShow(!show);
 
   const handleInputChange = event => {
@@ -43,7 +49,7 @@ const Login = () => {
       });
       if (res.status === 200) {
         const data = await res.json();
-        authContext.login(data.token);
+        authContext.login({ token: data.token });
         history.push('/');
       } else {
         toast({

@@ -12,7 +12,7 @@ const CompetitorTable = ({ competitors, handleDelete, competitorsDownloaded }) =
   const [isTable] = useMediaQuery('(min-width: 766px)');
 
   const competitorTableRows = competitors.map((comp, index) => (
-    <Tr>
+    <Tr key={index}>
       <Td>{index + 1}</Td>
       <Td>{comp.firstname}</Td>
       <Td>{comp.lastname}</Td>

@@ -131,4 +131,15 @@ router.patch('/new-password', withAuth, validateNewPassword, async (req, res, ne
   return res.status(200).json();
 });
 
+router.get('/details', withAuth, async (req, res, next) => {
+  let userMe = null;
+  try {
+    const userRepository = getConnection().getRepository('User');
+    userMe = await userRepository.findOne({ where: { email: req.email } });
+  } catch (e) {
+    return next(e);
+  }
+  return res.status(200).json({ userMe: email });
+});
+
 module.exports = router;

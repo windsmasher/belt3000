@@ -10,7 +10,6 @@ const Statistics = () => {
 
   useEffect(() => {
     fetchAllCompetitors();
-    return () => {};
   }, []);
 
   const fetchAllCompetitors = async () => {

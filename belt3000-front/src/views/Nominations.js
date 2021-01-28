@@ -59,7 +59,7 @@ const Nominations = () => {
   const fetchNominationsByCompetitor = async competitorId => {
     try {
       const response = await fetch(`${Config.API_URL}nomination/by-competitor/${competitorId}`, {
-        headers: { authorization: localStorage.getItem('token') },
+        headers: { authorization: authContext.token },
       });
       const nominationsByCompetitor = await response.json();
       setNominations(nominationsByCompetitor);
@@ -87,7 +87,7 @@ const Nominations = () => {
     try {
       const res = await fetch(`${Config.API_URL}nomination/previous/${selectedCompetitor}`, {
         method: 'DELETE',
-        headers: { authorization: localStorage.getItem('token') },
+        headers: { authorization: authContext.token },
       });
       if (res.status === 200) {
         toast({
