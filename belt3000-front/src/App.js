@@ -62,7 +62,6 @@ const App = () => {
         <ErrorBoundary>
           <Router>
             <Header />
-            {/* <PrivateRoute component={Navbar} /> */}
             {!!token ? <Navbar /> : null}
             <Switch>
               <PrivateRoute path="/nominations" component={Nominations} />
