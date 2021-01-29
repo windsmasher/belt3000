@@ -3,7 +3,7 @@ import { Text, Stack, Box, FormControl, Input, List, ListItem, Link, useToast, D
 import Subtitle from '../components/Subtitle';
 import ButtonComponent from '../components/ButtonComponent';
 import { Config } from '../config/config';
-import { AuthContext } from '../context';
+import { AuthContext } from '../AuthContext';
 
 const AddAdmin = () => {
   const [newAdminEmail, setNewAdminEmail] = useState('');

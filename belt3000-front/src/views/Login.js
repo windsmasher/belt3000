@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Config } from '../config/config';
 import { NavLink, useHistory } from 'react-router-dom';
-import { AuthContext } from '../context';
+import { AuthContext } from '../AuthContext';
 import {
   useToast,
   Input,

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Config } from '../config/config';
 import { useHistory } from 'react-router-dom';
-import { AuthContext } from '../context';
+import { AuthContext } from '../AuthContext';
 import {
   useToast,
   Input,

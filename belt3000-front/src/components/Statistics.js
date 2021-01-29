@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Config } from '../config/config';
-import { AuthContext } from '../context';
+import { AuthContext } from '../AuthContext';
 import { useToast, Box, Stat, StatNumber, StatLabel, Heading } from '@chakra-ui/react';
 
 const Statistics = () => {

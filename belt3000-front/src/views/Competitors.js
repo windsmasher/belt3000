@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Config } from '../config/config';
-import { AuthContext } from '../context';
+import { AuthContext } from '../AuthContext';
 import { useToast } from '@chakra-ui/react';
 import CompetitorTable from '../components/CompetitorTable';
 

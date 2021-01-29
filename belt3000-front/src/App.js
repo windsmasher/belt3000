@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Competitors from './views/Competitors';
 import Home from './views/Home';
@@ -9,7 +9,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import RegisterAdmin from './views/Register';
 import AddNomination from './views/AddNomination';
 import Login from './views/Login';
-import { AuthContext } from './context';
+import { AuthContext } from './AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import Header from './components/Header';
@@ -18,25 +18,13 @@ import AddAdmin from './views/AddAdmin';
 import NewPassword from './views/NewPassword';
 
 const App = () => {
-  const [token, setToken] = useState(null);
+  const authContext = useContext(AuthContext);
 
   useEffect(() => {
-    login();
+    authContext.login();
+
+    console.log(authContext.login);
   }, []);
-
-  const login = dataToken => {
-    const authData = dataToken || JSON.parse(localStorage.getItem('userData'));
-
-    if (authData) {
-      setToken(authData.token);
-      localStorage.setItem('userData', JSON.stringify({ token: authData.token }));
-    }
-  };
-
-  const logout = () => {
-    setToken(null);
-    localStorage.removeItem('userData');
-  };
 
   const theme = extendTheme({
     components: {
@@ -50,19 +38,12 @@ const App = () => {
   });
 
   return (
-    <ChakraProvider theme={theme}>
-      <AuthContext.Provider
-        value={{
-          isLoggedIn: !!token,
-          token: token,
-          login: login,
-          logout: logout,
-        }}
-      >
+    <AuthContext.Provider>
+      <ChakraProvider theme={theme}>
         <ErrorBoundary>
           <Router>
             <Header />
-            {!!token ? <Navbar /> : null}
+            {authContext.isLoggedIn ? <Navbar /> : null}
             <Switch>
               <PrivateRoute path="/nominations" component={Nominations} />
               <PrivateRoute path="/competitors" component={Competitors} />
@@ -76,8 +57,8 @@ const App = () => {
             </Switch>
           </Router>
         </ErrorBoundary>
-      </AuthContext.Provider>
-    </ChakraProvider>
+      </ChakraProvider>
+    </AuthContext.Provider>
   );
 };
 

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Box, Heading, List, ListItem, Link, useToast } from '@chakra-ui/react';
 import { Config } from '../config/config';
-import { AuthContext } from '../context';
+import { AuthContext } from '../AuthContext';
 
 const NotAcceptedGymList = ({ gymsNotAccepted, fetchGyms }) => {
   const authContext = useContext(AuthContext);

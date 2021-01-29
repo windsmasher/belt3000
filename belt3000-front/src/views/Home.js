@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Config } from '../config/config';
-import { AuthContext } from '../context';
+import { AuthContext } from '../AuthContext';
 import { useToast, Box, Heading, Stack, Text, Select, Flex } from '@chakra-ui/react';
 import ButtonComponent from '../components/ButtonComponent';
 import NewGymRequest from '../components/NewGymRequest';

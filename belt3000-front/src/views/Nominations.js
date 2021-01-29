@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Config } from '../config/config';
 import { useToast } from '@chakra-ui/react';
-import { AuthContext } from '../context';
+import { AuthContext } from '../AuthContext';
 import NominationTable from '../components/NominationTable';
 
 const Nominations = () => {

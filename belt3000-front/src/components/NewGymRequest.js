@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Box, Link, Text, Input, useToast } from '@chakra-ui/react';
 import { Config } from '../config/config';
-import { AuthContext } from '../context';
+import { AuthContext } from '../AuthContext';
 
 const NewGymRequest = ({ fetchGyms }) => {
   const [showInputForNewGym, setShowInputForNewGym] = useState(false);

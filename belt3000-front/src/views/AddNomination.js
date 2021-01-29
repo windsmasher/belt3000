@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
 import { Config } from '../config/config';
-import { AuthContext } from '../context';
+import { AuthContext } from '../AuthContext';
 import { useToast, Box, Stack, FormLabel, FormControl, Input, Select } from '@chakra-ui/react';
 import Subtitle from '../components/Subtitle';
 import ButtonComponent from '../components/ButtonComponent';

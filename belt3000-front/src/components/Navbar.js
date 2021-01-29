@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { AuthContext } from '../context';
+import { AuthContext } from '../AuthContext';
 import { Stack, Flex } from '@chakra-ui/react';
 import MenuItem from './MenuItem';
 
