@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Config } from '../config/config';
 import { useToast } from '@chakra-ui/react';
 import { AuthContext } from '../AuthContext';
-import NominationTable from '../components/NominationTable';
+import NominationTable from '../components/NominationTable/NominationTable';
 
 const Nominations = () => {
   const [nominations, setNominations] = useState([]);
