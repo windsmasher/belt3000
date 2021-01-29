@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useEffect, useContext } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Competitors from './views/Competitors';
 import Home from './views/Home';
@@ -9,7 +9,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import RegisterAdmin from './views/Register';
 import AddNomination from './views/AddNomination';
 import Login from './views/Login';
-import { AuthContext } from './AuthContext';
+import AuthProvider from './AuthProvider';
 import PrivateRoute from './components/PrivateRoute';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import Header from './components/Header';
@@ -18,14 +18,6 @@ import AddAdmin from './views/AddAdmin';
 import NewPassword from './views/NewPassword';
 
 const App = () => {
-  const authContext = useContext(AuthContext);
-
-  useEffect(() => {
-    authContext.login();
-
-    console.log(authContext.login);
-  }, []);
-
   const theme = extendTheme({
     components: {
       Table: {
@@ -38,12 +30,12 @@ const App = () => {
   });
 
   return (
-    <AuthContext.Provider>
+    <AuthProvider>
       <ChakraProvider theme={theme}>
         <ErrorBoundary>
           <Router>
             <Header />
-            {authContext.isLoggedIn ? <Navbar /> : null}
+            <Navbar />
             <Switch>
               <PrivateRoute path="/nominations" component={Nominations} />
               <PrivateRoute path="/competitors" component={Competitors} />
@@ -58,7 +50,7 @@ const App = () => {
           </Router>
         </ErrorBoundary>
       </ChakraProvider>
-    </AuthContext.Provider>
+    </AuthProvider>
   );
 };
 

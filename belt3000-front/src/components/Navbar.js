@@ -6,7 +6,7 @@ import MenuItem from './MenuItem';
 const Navbar = () => {
   const authContext = useContext(AuthContext);
 
-  return (
+  return authContext.isLoggedIn ? (
     <Flex
       bgGradient={['white', 'white', 'linear(to-r, blue.300, pink.900)', 'linear(to-r, blue.300, pink.900)']}
       color={['black', 'black', 'linear(to-r, blue.300, pink.900)', 'linear(to-r, blue.300, pink.900)']}
@@ -43,7 +43,7 @@ const Navbar = () => {
         </MenuItem>
       </Stack>
     </Flex>
-  );
+  ) : null;
 };
 
 export default Navbar;
