@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import ButtonComponent from '../components/ButtonComponent';
 import { NavLink } from 'react-router-dom';
+import { apiCall } from '../apiCall';
 
 const RegisterAdmin = () => {
   const [registerData, setRegisterData] = useState({
@@ -37,37 +38,21 @@ const RegisterAdmin = () => {
 
   const handleSubmit = async event => {
     event.preventDefault();
-    try {
-      const res = await fetch(`${Config.API_URL}gym/new-gym-with-new-account`, {
+    apiCall(
+      `${Config.API_URL}gym/new-gym-with-new-account`,
+      {
         method: 'POST',
         body: JSON.stringify(registerData),
         headers: {
           'Content-Type': 'application/json',
         },
-      });
-      if (res.status !== 201) {
-        toast({
-          title: (await res?.json())?.errorMsg || 'Wystąpił błąd. Niepoprawne dane.',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: 'Poprawnie zarejestrowano.',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    } catch (e) {
-      toast({
-        title: 'Wystąpił błąd.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
+      },
+      toast,
+      'Poprawnie zarejestrowano.',
+      'Wystąpił błąd.',
+      async res => {},
+      () => {},
+    );
   };
 
   return (

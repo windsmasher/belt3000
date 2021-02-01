@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import ButtonComponent from '../components/ButtonComponent';
 import Subtitle from '../components/Subtitle';
+import { apiCall } from '../apiCall';
 
 const NewPassword = () => {
   const authContext = useContext(AuthContext);
@@ -29,36 +30,24 @@ const NewPassword = () => {
 
   const onSubmit = async event => {
     event.preventDefault();
-    try {
-      const res = await fetch(`${Config.API_URL}user/new-password`, {
+
+    apiCall(
+      `${Config.API_URL}user/new-password`,
+      {
         method: 'PATCH',
         body: JSON.stringify(newPasswordData),
         headers: { 'Content-Type': 'application/json', authorization: authContext.token },
-      });
-      if (res.status === 200) {
-        toast({
-          title: 'Hasło zostało zmienione',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
+      },
+      toast,
+      'Hasło zostało zmienione',
+      'Wystąpił błąd.',
+      async res => {
         setNewPasswordData({ oldPassword: '', newPassword1: '', newPassword2: '' });
-      } else {
-        toast({
-          title: (await res?.json())?.errorMsg || 'Wystąpił błąd.',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    } catch (e) {
-      toast({
-        title: 'Wystąpił błąd.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
+      },
+      () => {
+        authContext.logout();
+      },
+    );
   };
 
   return (

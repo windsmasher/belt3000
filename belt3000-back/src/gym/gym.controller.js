@@ -72,6 +72,7 @@ router.post('/new-gym-with-new-account', validateNewGymWithAccount, async (req, 
       email,
       role: 0,
     });
+    console.log(newUser);
     newGym = await gymRepository.save({
       name: newGymName,
       isAccepted: false,

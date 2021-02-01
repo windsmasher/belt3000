@@ -3,6 +3,7 @@ import { Config } from '../config/config';
 import { AuthContext } from '../AuthContext';
 import { useToast } from '@chakra-ui/react';
 import CompetitorTable from '../components/CompetitorTable';
+import { apiCall } from '../apiCall';
 
 const Competitors = () => {
   const authContext = useContext(AuthContext);
@@ -16,53 +17,43 @@ const Competitors = () => {
   }, []);
 
   const fetchAllCompetitors = async () => {
-    try {
-      const response = await fetch(`${Config.API_URL}competitor/all`, {
+    apiCall(
+      `${Config.API_URL}competitor/all`,
+      {
+        method: 'GET',
         headers: { authorization: authContext.token },
-      });
-      const competitors = await response.json();
-      setCompetitors(competitors);
-      setCompetitorsDownloaded(true);
-    } catch (err) {
-      toast({
-        title: 'Błąd pobrania listy zawodników.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
+      },
+      toast,
+      '',
+      'Wystąpił błąd.',
+      async res => {
+        const body = await res.json();
+        setCompetitors(body);
+        setCompetitorsDownloaded(true);
+      },
+      () => {
+        authContext.logout();
+      },
+    );
   };
 
   const handleDelete = async id => {
-    try {
-      const res = await fetch(`${Config.API_URL}competitor/${id}`, {
+    await apiCall(
+      `${Config.API_URL}competitor/${id}`,
+      {
         method: 'DELETE',
         headers: { auThorization: authContext.token },
-      });
-      if (res.status !== 200) {
-        toast({
-          title: (await res?.json())?.errorMsg || 'Błąd usunięcia zawodnika.',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: 'Poprawnie usunięto zawodnika.',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    } catch (e) {
-      toast({
-        title: 'Błąd usunięcia zawodnika.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-    fetchAllCompetitors();
+      },
+      toast,
+      'Poprawnie usunięto zawodnika.',
+      'Błąd usunięcia zawodnika.',
+      async res => {
+        fetchAllCompetitors();
+      },
+      () => {
+        authContext.logout();
+      },
+    );
   };
 
   return (

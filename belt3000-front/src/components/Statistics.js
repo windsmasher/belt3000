@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Config } from '../config/config';
 import { AuthContext } from '../AuthContext';
 import { useToast, Box, Stat, StatNumber, StatLabel, Heading } from '@chakra-ui/react';
+import { apiCall } from '../apiCall';
 
 const Statistics = () => {
   const [competitors, setCompetitors] = useState([]);
@@ -13,21 +14,22 @@ const Statistics = () => {
   }, []);
 
   const fetchAllCompetitors = async () => {
-    try {
-      const response = await fetch(`${Config.API_URL}competitor/all`, {
+    apiCall(
+      `${Config.API_URL}competitor/all`,
+      {
         headers: { authorization: authContext.token },
-      });
-      const competitors = await response.json();
-      setCompetitors(competitors);
-    } catch (err) {
-      toast({
-        title: 'Wystąpił błąd.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-      console.log(`Competitors fetch error: ${err}`);
-    }
+      },
+      toast,
+      '',
+      'Wystąpił błąd.',
+      async res => {
+        const competitors = await res.json();
+        setCompetitors(competitors);
+      },
+      () => {
+        authContext.logout();
+      },
+    );
   };
 
   return (

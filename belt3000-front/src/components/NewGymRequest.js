@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Box, Link, Text, Input, useToast } from '@chakra-ui/react';
 import { Config } from '../config/config';
 import { AuthContext } from '../AuthContext';
+import { apiCall } from '../apiCall';
 
 const NewGymRequest = ({ fetchGyms }) => {
   const [showInputForNewGym, setShowInputForNewGym] = useState(false);
@@ -10,37 +11,24 @@ const NewGymRequest = ({ fetchGyms }) => {
   const authContext = useContext(AuthContext);
 
   const newGymRequest = async () => {
-    try {
-      const res = await fetch(`${Config.API_URL}gym/request-for-new-gym`, {
+    apiCall(
+      `${Config.API_URL}gym/request-for-new-gym`,
+      {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', authorization: authContext.token },
         body: JSON.stringify({ name: newGymValue }),
-      });
-      if (res.status !== 200) {
-        toast({
-          title: (await res?.json())?.errorMsg || 'Wystąpił błąd. Niepoprawne dane.',
-          status: 'error',
-          isClosable: true,
-          duration: 3000,
-        });
-      } else {
-        toast({
-          title: 'Prośba o nowy klub wysłana',
-          status: 'success',
-          isClosable: true,
-          duration: 3000,
-        });
+      },
+      toast,
+      'Prośba o nowy klub wysłana',
+      'Wystąpił błąd.',
+      async res => {
         setNewGymValue('');
         fetchGyms();
-      }
-    } catch (e) {
-      toast({
-        title: 'Wystąpił błąd.',
-        status: 'error',
-        isClosable: true,
-        duration: 3000,
-      });
-    }
+      },
+      () => {
+        authContext.logout();
+      },
+    );
   };
 
   return (

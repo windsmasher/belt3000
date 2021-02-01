@@ -6,6 +6,7 @@ import { AuthContext } from '../AuthContext';
 import { useToast, Box, Stack, FormLabel, FormControl, Input, Select } from '@chakra-ui/react';
 import Subtitle from '../components/Subtitle';
 import ButtonComponent from '../components/ButtonComponent';
+import { apiCall } from '../apiCall';
 
 const AddNomination = () => {
   const [nomination, setNomination] = useState({ date: new Date(), nominationType: 0, description: null });
@@ -16,37 +17,23 @@ const AddNomination = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    console.log(nomination);
-    try {
-      const res = await fetch(`${Config.API_URL}nomination/add/${competitorId}`, {
+    apiCall(
+      `${Config.API_URL}nomination/add/${competitorId}`,
+      {
         method: 'POST',
         body: JSON.stringify(nomination),
         headers: { 'Content-Type': 'application/json', authorization: authContext.token },
-      });
-      if (res.status !== 201) {
-        toast({
-          title: (await res?.json())?.errorMsg || 'Wystąpił błąd. Niepoprawne dane.',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: 'Poprawnie dodano nominacje.',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
+      },
+      toast,
+      'Poprawnie dodano nominacje.',
+      'Wystąpił błąd.',
+      async res => {
         history.push('/nominations');
-      }
-    } catch (e) {
-      toast({
-        title: 'Wystąpił błąd.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
+      },
+      () => {
+        authContext.logout();
+      },
+    );
   };
 
   return (

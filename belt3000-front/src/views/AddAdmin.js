@@ -4,6 +4,7 @@ import Subtitle from '../components/Subtitle';
 import ButtonComponent from '../components/ButtonComponent';
 import { Config } from '../config/config';
 import { AuthContext } from '../AuthContext';
+import { apiCall } from '../apiCall';
 
 const AddAdmin = () => {
   const [newAdminEmail, setNewAdminEmail] = useState('');
@@ -16,55 +17,45 @@ const AddAdmin = () => {
   }, []);
 
   const fetchAdmins = async () => {
-    try {
-      const response = await fetch(`${Config.API_URL}user/list-from-gym-except-me/`, {
+    await apiCall(
+      `${Config.API_URL}user/list-from-gym-except-me/`,
+      {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', authorization: authContext.token },
-      });
-      const admins = await response.json();
-      setAdminsList(admins);
-    } catch (e) {
-      toast({
-        title: 'Wystąpił błąd.',
-        status: 'error',
-        isClosable: true,
-        duration: 3000,
-      });
-    }
+      },
+      toast,
+      '',
+      'Wystąpił błąd.',
+      async res => {
+        const body = await res.json();
+        console.log(body);
+        setAdminsList(body);
+      },
+      () => {
+        authContext.logout();
+      },
+    );
   };
 
   const handleAddAdmin = async () => {
-    try {
-      const res = await fetch(`${Config.API_URL}user/add-admin/`, {
+    apiCall(
+      `${Config.API_URL}user/add-admin/`,
+      {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', authorization: authContext.token },
         body: JSON.stringify({ email: newAdminEmail }),
-      });
-      if (res.status !== 200) {
-        toast({
-          title: (await res?.json())?.errorMsg || 'Wystąpił błąd. Niepoprawne dane.',
-          status: 'error',
-          isClosable: true,
-          duration: 3000,
-        });
-      } else {
-        toast({
-          title: 'Zaproszono nowego trenera',
-          status: 'success',
-          isClosable: true,
-          duration: 3000,
-        });
+      },
+      toast,
+      'Zaproszono nowego trenera',
+      'Wystąpił błąd.',
+      async res => {
         setNewAdminEmail('');
         await fetchAdmins();
-      }
-    } catch (e) {
-      toast({
-        title: 'Wystąpił błąd.',
-        status: 'error',
-        isClosable: true,
-        duration: 3000,
-      });
-    }
+      },
+      () => {
+        authContext.logout();
+      },
+    );
   };
 
   return (

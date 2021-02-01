@@ -6,6 +6,7 @@ import { AuthContext } from '../AuthContext';
 import { useToast, Box, FormLabel, FormControl, Input, Stack, Select } from '@chakra-ui/react';
 import ButtonComponent from '../components/ButtonComponent';
 import Subtitle from '../components/Subtitle';
+import { apiCall } from '../apiCall';
 
 const AddCompetitor = () => {
   const [competitor, setCompetitor] = useState({
@@ -26,66 +27,68 @@ const AddCompetitor = () => {
 
   const fetchCompetitor = async () => {
     if (competitorId) {
-      const response = await fetch(`${Config.API_URL}competitor/one/${competitorId}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', authorization: authContext.token },
-      });
-      const competitorJson = await response.json();
-
-      let competitorTemp = {
-        firstname: competitorJson.firstname,
-        lastname: competitorJson.lastname,
-        isAdult: competitorJson.isAdult.toString(),
-        belt: competitorJson.belt,
-        stripes: competitorJson.stripes.toString(),
-      };
-
-      setCompetitor(competitorTemp);
+      await apiCall(
+        `${Config.API_URL}competitor/one/${competitorId}`,
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', authorization: authContext.token },
+        },
+        toast,
+        '',
+        'Wystąpił błąd.',
+        async res => {
+          const body = await res.json();
+          let competitorTemp = {
+            firstname: body.firstname,
+            lastname: body.lastname,
+            isAdult: body.isAdult.toString(),
+            belt: body.belt,
+            stripes: body.stripes.toString(),
+          };
+          setCompetitor(competitorTemp);
+        },
+        () => {
+          authContext.logout();
+        },
+      );
     }
   };
 
   const handleSubmit = async event => {
     event.preventDefault();
-    try {
-      let competitorTemp = competitor;
-      competitorTemp.isAdult = competitor.isAdult === 'true' ? true : false;
-
-      const res = competitorId
-        ? await fetch(`${Config.API_URL}competitor/${competitorId}`, {
+    let competitorTemp = competitor;
+    competitorTemp.isAdult = competitor.isAdult === 'true' ? true : false;
+    const fetchBody = competitorId
+      ? {
+          url: `${Config.API_URL}competitor/${competitorId}`,
+          options: {
             method: 'PATCH',
             body: JSON.stringify(competitorTemp),
             headers: { 'Content-Type': 'application/json', authorization: authContext.token },
-          })
-        : await fetch(`${Config.API_URL}competitor/add`, {
+          },
+        }
+      : {
+          url: `${Config.API_URL}competitor/add`,
+          options: {
             method: 'POST',
             body: JSON.stringify(competitorTemp),
             headers: { 'Content-Type': 'application/json', authorization: authContext.token },
-          });
+          },
+        };
 
-      if (res.status !== (competitorId ? 200 : 201)) {
-        toast({
-          title: (await res?.json())?.errorMsg || 'Wystąpił błąd. Niepoprawne dane.',
-          status: 'error',
-          isClosable: true,
-          duration: 3000,
-        });
-      } else {
-        toast({
-          title: competitorId ? 'Poprawnie zaktualizowano zawodnika.' : 'Poprawnie dodano zawodnika.',
-          status: 'success',
-          isClosable: true,
-          duration: 3000,
-        });
+    apiCall(
+      fetchBody.url,
+      fetchBody.options,
+      toast,
+      competitorId ? 'Poprawnie zaktualizowano zawodnika.' : 'Poprawnie dodano zawodnika.',
+      'Wystąpił błąd.',
+      async res => {
         history.push('/competitors');
-      }
-    } catch (err) {
-      toast({
-        title: 'Wystąpił błąd.',
-        status: 'error',
-        isClosable: true,
-        duration: 3000,
-      });
-    }
+      },
+      () => {
+        authContext.logout();
+      },
+    );
   };
 
   return (

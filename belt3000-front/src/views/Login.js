@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import ButtonComponent from '../components/ButtonComponent';
 import Subtitle from '../components/Subtitle';
+import { apiCall } from '../apiCall';
 
 const Login = () => {
   const authContext = useContext(AuthContext);
@@ -40,33 +41,24 @@ const Login = () => {
 
   const onSubmit = async event => {
     event.preventDefault();
-    console.log(loginData);
-    try {
-      const res = await fetch(`${Config.API_URL}auth/login`, {
+
+    apiCall(
+      `${Config.API_URL}auth/login`,
+      {
         method: 'POST',
         body: JSON.stringify(loginData),
         headers: { 'Content-Type': 'application/json' },
-      });
-      if (res.status === 200) {
-        const data = await res.json();
-        authContext.login({ token: data.token });
+      },
+      toast,
+      '',
+      'Wystąpił błąd.',
+      async res => {
+        const body = await res.json();
+        authContext.login({ token: body.token });
         history.push('/');
-      } else {
-        toast({
-          title: (await res?.json())?.errorMsg || 'Wystąpił błąd.',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    } catch (e) {
-      toast({
-        title: 'Wystąpił błąd.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
+      },
+      () => {},
+    );
   };
 
   return (

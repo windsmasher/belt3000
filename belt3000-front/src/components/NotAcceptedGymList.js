@@ -2,41 +2,29 @@ import React, { useContext } from 'react';
 import { Box, Heading, List, ListItem, Link, useToast } from '@chakra-ui/react';
 import { Config } from '../config/config';
 import { AuthContext } from '../AuthContext';
+import { apiCall } from '../apiCall';
 
 const NotAcceptedGymList = ({ gymsNotAccepted, fetchGyms }) => {
   const authContext = useContext(AuthContext);
   const toast = useToast();
 
   const deleteGym = async gymId => {
-    try {
-      const res = await fetch(`${Config.API_URL}gym/remove-not-accepted/${gymId}`, {
+    await apiCall(
+      `${Config.API_URL}gym/remove-not-accepted/${gymId}`,
+      {
         method: 'DELETE',
-        headers: { auThorization: authContext.token },
-      });
-      if (res.status !== 200) {
-        toast({
-          title: (await res?.json())?.errorMsg || 'Błąd usunięcia wniosku.',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: 'Poprawnie usunięto wniosek.',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
-        fetchGyms();
-      }
-    } catch (e) {
-      toast({
-        title: 'Błąd usunięcia wniosku.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
+        headers: { authorization: authContext.token },
+      },
+      toast,
+      'Poprawnie usunięto wniosek',
+      'Błąd usunięcia wniosku.',
+      async res => {
+        await fetchGyms();
+      },
+      () => {
+        authContext.logout();
+      },
+    );
   };
 
   return gymsNotAccepted && gymsNotAccepted.length > 0 ? (

@@ -6,6 +6,7 @@ import ButtonComponent from '../components/ButtonComponent';
 import NewGymRequest from '../components/NewGymRequest';
 import Statistics from '../components/Statistics';
 import NotAcceptedGymList from '../components/NotAcceptedGymList';
+import { apiCall } from '../apiCall';
 
 const Home = () => {
   const [gymDetails, setGymDetails] = useState({ id: '', name: '', city: '' });
@@ -21,66 +22,64 @@ const Home = () => {
   }, []);
 
   const fetchGymDetails = async () => {
-    try {
-      const response = await fetch(`${Config.API_URL}gym/details`, {
+    apiCall(
+      `${Config.API_URL}gym/details`,
+      {
         headers: { authorization: authContext.token },
-      });
-      const gymDetails = await response.json();
-      setGymDetails(gymDetails);
-    } catch (err) {
-      toast({
-        title: 'Wystąpił błąd.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
+      },
+      toast,
+      '',
+      'Wystąpił błąd.',
+      async res => {
+        const gymDetails = await res.json();
+        setGymDetails(gymDetails);
+      },
+      () => {
+        authContext.logout();
+      },
+    );
   };
 
   const fetchMineGyms = async () => {
-    try {
-      const response = await fetch(`${Config.API_URL}gym/mine`, {
+    apiCall(
+      `${Config.API_URL}gym/mine`,
+      {
         headers: { authorization: authContext.token },
-      });
-      const gyms = await response.json();
-      setMineGyms(gyms);
-      setGymToChangeId(gyms.filter(gym => gym.id !== gymDetails.id)[0].id);
-    } catch (err) {
-      toast({
-        title: 'Wystąpił błąd.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
+      },
+      toast,
+      '',
+      'Wystąpił błąd.',
+      async res => {
+        const gyms = await res.json();
+        setMineGyms(gyms);
+        setGymToChangeId(gyms.filter(gym => gym.id !== gymDetails.id)[0].id);
+      },
+      () => {
+        authContext.logout();
+      },
+    );
   };
 
   const updateCurrentGym = async () => {
-    console.log(gymToChangeId);
-    try {
-      const res = await fetch(`${Config.API_URL}user/currentGym/${gymToChangeId}`, {
+    apiCall(
+      `${Config.API_URL}user/currentGym/${gymToChangeId}`,
+      {
         headers: { authorization: authContext.token },
         method: 'PATCH',
-      });
-      await fetchMineGyms();
-      await fetchGymDetails();
-      if (res.status !== 200) {
-        toast({
-          title: (await res?.json())?.errorMsg || 'Wystąpił błąd',
-          status: 'error',
-          isClosable: true,
-          duration: 3000,
-        });
-      }
-    } catch (err) {
-      toast({
-        title: 'Wystąpił błąd.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
+      },
+      toast,
+      '',
+      'Wystąpił błąd.',
+      async res => {
+        await fetchMineGyms();
+        await fetchGymDetails();
+      },
+      () => {
+        authContext.logout();
+      },
+    );
   };
+
   const restGymsLength = mineGyms.filter(gym => gym.id !== gymDetails.id && gym.isAccepted === true).length;
   const gymsNotAccepted = mineGyms.filter(gym => gym.isAccepted === false);
   return (
