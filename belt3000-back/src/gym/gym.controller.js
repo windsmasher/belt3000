@@ -79,6 +79,8 @@ router.post('/new-gym-with-new-account', validateNewGymWithAccount, async (req, 
       mainAdmin: newUser,
       users: [newUser],
     });
+    console.log(newGym);
+
     newUser.currentGym = newGym;
     await userRepository.save(newUser);
   } catch (e) {

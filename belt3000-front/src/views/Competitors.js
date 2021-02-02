@@ -4,38 +4,42 @@ import { AuthContext } from '../AuthContext';
 import { useToast } from '@chakra-ui/react';
 import CompetitorTable from '../components/CompetitorTable';
 import { apiCall } from '../apiCall';
+import { useSelector, useDispatch } from 'react-redux';
+import { getAllCompetitors } from '../actions/competitor-action';
 
 const Competitors = () => {
   const authContext = useContext(AuthContext);
 
-  const [competitors, setCompetitors] = useState([]);
-  const [competitorsDownloaded, setCompetitorsDownloaded] = useState(false);
+  // const [competitors, setCompetitors] = useState([]);
+  const [competitorsDownloaded, setCompetitorsDownloaded] = useState(true);
   const toast = useToast();
+  const competitors = useSelector(state => state.competitorReducer);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchAllCompetitors();
+    dispatch(getAllCompetitors());
   }, []);
 
-  const fetchAllCompetitors = async () => {
-    apiCall(
-      `${Config.API_URL}competitor/all`,
-      {
-        method: 'GET',
-        headers: { authorization: authContext.token },
-      },
-      toast,
-      '',
-      'Wystąpił błąd.',
-      async res => {
-        const body = await res.json();
-        setCompetitors(body);
-        setCompetitorsDownloaded(true);
-      },
-      () => {
-        authContext.logout();
-      },
-    );
-  };
+  // const fetchAllCompetitors = async () => {
+  //   apiCall(
+  //     `${Config.API_URL}competitor/all`,
+  //     {
+  //       method: 'GET',
+  //       headers: { authorization: authContext.token },
+  //     },
+  //     toast,
+  //     '',
+  //     'Wystąpił błąd.',
+  //     async res => {
+  //       const body = await res.json();
+  //       setCompetitors(body);
+  //       setCompetitorsDownloaded(true);
+  //     },
+  //     () => {
+  //       authContext.logout();
+  //     },
+  //   );
+  // };
 
   const handleDelete = async id => {
     await apiCall(
@@ -48,7 +52,7 @@ const Competitors = () => {
       'Poprawnie usunięto zawodnika.',
       'Błąd usunięcia zawodnika.',
       async res => {
-        fetchAllCompetitors();
+        // fetchAllCompetitors();
       },
       () => {
         authContext.logout();

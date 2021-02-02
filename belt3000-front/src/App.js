@@ -16,40 +16,39 @@ import Header from './components/Header';
 import Navbar from './components/Navbar';
 import AddAdmin from './views/AddAdmin';
 import NewPassword from './views/NewPassword';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import rootReducer from './reducers/root-reducer';
 
 const App = () => {
   const theme = extendTheme({
-    components: {
-      Table: {
-        baseStyle: {
-          variant: 'striped',
-        },
-      },
-    },
     breakpoints: ['30em', '68em', '78em', '96em'],
   });
+  const store = createStore(rootReducer);
 
   return (
     <AuthProvider>
-      <ChakraProvider theme={theme}>
-        <ErrorBoundary>
-          <Router>
-            <Header />
-            <Navbar />
-            <Switch>
-              <PrivateRoute path="/nominations" component={Nominations} />
-              <PrivateRoute path="/competitors" component={Competitors} />
-              <PrivateRoute path="/add-competitor/:competitorId?" component={AddCompetitor} />
-              <PrivateRoute path="/add-nomination/:competitorId" component={AddNomination} />
-              <PrivateRoute path="/add-admin" component={AddAdmin} />
-              <PrivateRoute path="/new-password" component={NewPassword} />
-              <PrivateRoute exact path="/" component={Home} />
-              <Route path="/login-admin" component={Login} />
-              <Route path="/register-admin" component={RegisterAdmin} />
-            </Switch>
-          </Router>
-        </ErrorBoundary>
-      </ChakraProvider>
+      <Provider store={store}>
+        <ChakraProvider theme={theme}>
+          <ErrorBoundary>
+            <Router>
+              <Header />
+              <Navbar />
+              <Switch>
+                <PrivateRoute path="/nominations" component={Nominations} />
+                <PrivateRoute path="/competitors" component={Competitors} />
+                <PrivateRoute path="/add-competitor/:competitorId?" component={AddCompetitor} />
+                <PrivateRoute path="/add-nomination/:competitorId" component={AddNomination} />
+                <PrivateRoute path="/add-admin" component={AddAdmin} />
+                <PrivateRoute path="/new-password" component={NewPassword} />
+                <PrivateRoute exact path="/" component={Home} />
+                <Route path="/login-admin" component={Login} />
+                <Route path="/register-admin" component={RegisterAdmin} />
+              </Switch>
+            </Router>
+          </ErrorBoundary>
+        </ChakraProvider>
+      </Provider>
     </AuthProvider>
   );
 };
