@@ -7,6 +7,8 @@ import { useToast, Box, FormLabel, FormControl, Input, Stack, Select } from '@ch
 import ButtonComponent from '../components/ButtonComponent';
 import Subtitle from '../components/Subtitle';
 import { apiCall } from '../apiCall';
+import { useSelector, useDispatch } from 'react-redux';
+import { addCompetitor, updateCompetitor } from '../actions/competitor-action';
 
 const AddCompetitor = () => {
   const [competitor, setCompetitor] = useState({
@@ -20,6 +22,7 @@ const AddCompetitor = () => {
   const authContext = useContext(AuthContext);
   const toast = useToast();
   const history = useHistory();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchCompetitor();
@@ -56,39 +59,11 @@ const AddCompetitor = () => {
 
   const handleSubmit = async event => {
     event.preventDefault();
-    let competitorTemp = competitor;
-    competitorTemp.isAdult = competitor.isAdult === 'true' ? true : false;
-    const fetchBody = competitorId
-      ? {
-          url: `${Config.API_URL}competitor/${competitorId}`,
-          options: {
-            method: 'PATCH',
-            body: JSON.stringify(competitorTemp),
-            headers: { 'Content-Type': 'application/json', authorization: authContext.token },
-          },
-        }
-      : {
-          url: `${Config.API_URL}competitor/add`,
-          options: {
-            method: 'POST',
-            body: JSON.stringify(competitorTemp),
-            headers: { 'Content-Type': 'application/json', authorization: authContext.token },
-          },
-        };
-
-    apiCall(
-      fetchBody.url,
-      fetchBody.options,
-      toast,
-      competitorId ? 'Poprawnie zaktualizowano zawodnika.' : 'Poprawnie dodano zawodnika.',
-      'Wystąpił błąd.',
-      async res => {
-        history.push('/competitors');
-      },
-      () => {
-        authContext.logout();
-      },
-    );
+    let body = competitor;
+    body.isAdult = competitor.isAdult === 'true' ? true : false;
+    competitorId
+      ? dispatch(updateCompetitor(competitorId, body, authContext, toast))
+      : dispatch(addCompetitor(body, authContext, toast));
   };
 
   return (

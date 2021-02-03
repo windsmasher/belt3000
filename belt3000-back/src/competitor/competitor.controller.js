@@ -61,7 +61,7 @@ router.delete('/:id', withAuth, async (req, res) => {
   await nominationRepository.remove(nominations);
   await userRepository.remove(user);
 
-  return res.status(200).send();
+  return res.status(200).json(req.params.id);
 });
 
 router.patch('/:id', withAuth, validateAddCompetitor, async (req, res, next) => {

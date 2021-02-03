@@ -17,14 +17,15 @@ import Navbar from './components/Navbar';
 import AddAdmin from './views/AddAdmin';
 import NewPassword from './views/NewPassword';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import rootReducer from './reducers/root-reducer';
+import thunk from 'redux-thunk';
 
 const App = () => {
   const theme = extendTheme({
     breakpoints: ['30em', '68em', '78em', '96em'],
   });
-  const store = createStore(rootReducer);
+  const store = createStore(rootReducer, applyMiddleware(thunk));
 
   return (
     <AuthProvider>
