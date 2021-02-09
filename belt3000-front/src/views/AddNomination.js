@@ -1,39 +1,23 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router';
 import { useHistory } from 'react-router-dom';
-import { Config } from '../config/config';
-import { AuthContext } from '../AuthContext';
 import { useToast, Box, Stack, FormLabel, FormControl, Input, Select } from '@chakra-ui/react';
 import Subtitle from '../components/Subtitle';
 import ButtonComponent from '../components/ButtonComponent';
-import { apiCall } from '../apiCall';
+import { useSelector, useDispatch } from 'react-redux';
+import { addNomination } from '../actions/nomination-actions';
 
 const AddNomination = () => {
   const [nomination, setNomination] = useState({ date: new Date(), nominationType: 0, description: null });
   const { competitorId } = useParams();
-  const authContext = useContext(AuthContext);
   const toast = useToast();
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    apiCall(
-      `${Config.API_URL}nomination/add/${competitorId}`,
-      {
-        method: 'POST',
-        body: JSON.stringify(nomination),
-        headers: { 'Content-Type': 'application/json', authorization: authContext.token },
-      },
-      toast,
-      'Poprawnie dodano nominacje.',
-      'Wystąpił błąd.',
-      async res => {
-        history.push('/nominations');
-      },
-      () => {
-        authContext.logout();
-      },
-    );
+    dispatch(addNomination(nomination, competitorId, toast));
+    history.push('/nominations');
   };
 
   return (

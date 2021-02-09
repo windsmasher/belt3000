@@ -1,7 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Config } from '../config/config';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
-import { AuthContext } from '../AuthContext';
 import {
   useToast,
   Input,
@@ -17,19 +15,18 @@ import {
 } from '@chakra-ui/react';
 import ButtonComponent from '../components/ButtonComponent';
 import Subtitle from '../components/Subtitle';
-import { apiCall } from '../apiCall';
+import { useSelector, useDispatch } from 'react-redux';
+import { login } from '../actions/auth-actions';
 
 const Login = () => {
-  const authContext = useContext(AuthContext);
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [show, setShow] = useState(false);
   const history = useHistory();
-  const toast = useToast();
+  const dispatch = useDispatch();
+  const { token } = useSelector(state => state.authData);
 
   useEffect(() => {
-    if (authContext.isLoggedIn) {
-      history.push('/');
-    }
+    dispatch(login());
   }, []);
 
   const handleShowPassword = () => setShow(!show);
@@ -41,24 +38,7 @@ const Login = () => {
 
   const onSubmit = async event => {
     event.preventDefault();
-
-    apiCall(
-      `${Config.API_URL}auth/login`,
-      {
-        method: 'POST',
-        body: JSON.stringify(loginData),
-        headers: { 'Content-Type': 'application/json' },
-      },
-      toast,
-      '',
-      'Wystąpił błąd.',
-      async res => {
-        const body = await res.json();
-        authContext.login({ token: body.token });
-        history.push('/');
-      },
-      () => {},
-    );
+    dispatch(login(loginData));
   };
 
   return (

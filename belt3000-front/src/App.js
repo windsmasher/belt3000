@@ -17,22 +17,20 @@ import Navbar from './components/Navbar';
 import AddAdmin from './views/AddAdmin';
 import NewPassword from './views/NewPassword';
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import rootReducer from './reducers/root-reducer';
-import thunk from 'redux-thunk';
+import { store } from './store/store';
+import history from './history';
 
 const App = () => {
   const theme = extendTheme({
     breakpoints: ['30em', '68em', '78em', '96em'],
   });
-  const store = createStore(rootReducer, applyMiddleware(thunk));
 
   return (
     <AuthProvider>
       <Provider store={store}>
         <ChakraProvider theme={theme}>
           <ErrorBoundary>
-            <Router>
+            <Router history={history}>
               <Header />
               <Navbar />
               <Switch>

@@ -1,16 +1,10 @@
-import axios from 'axios';
+import { axiosClient } from '../axiosClient';
 import { Config } from '../config/config';
 
-export const getAllCompetitors = (authContext, toast) => {
+export const getAllCompetitors = toast => {
   return async dispatch => {
     try {
-      const response = await axios.get(`${Config.API_URL}competitor/all`, {
-        headers: { authorization: authContext.token },
-      });
-
-      if (response.status === 401) {
-        authContext.logout();
-      }
+      const response = await axiosClient.get(`${Config.API_URL}competitor/all`);
       if (response.status !== 200) {
         toast({
           title: 'Wystąpił błąd.',
@@ -32,16 +26,10 @@ export const getAllCompetitors = (authContext, toast) => {
   };
 };
 
-export const deleteCompetitor = (id, authContext, toast) => {
+export const deleteCompetitor = (id, toast) => {
   return async dispatch => {
     try {
-      const response = await axios.delete(`${Config.API_URL}competitor/${id}`, {
-        headers: { authorization: authContext.token },
-      });
-
-      if (response.status === 401) {
-        authContext.logout();
-      }
+      const response = await axiosClient.delete(`${Config.API_URL}competitor/${id}`);
       if (response.status === 200) {
         toast({
           title: 'Poprawnie usunięto zawodnika.',
@@ -70,18 +58,11 @@ export const deleteCompetitor = (id, authContext, toast) => {
   };
 };
 
-export const addCompetitor = (body, authContext, toast) => {
+export const addCompetitor = (body, toast) => {
   return async dispatch => {
     try {
-      const response = await axios.post(`${Config.API_URL}competitor/add`, {
-        body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json', authorization: authContext.token },
-      });
-
-      if (response.status === 401) {
-        authContext.logout();
-      }
-      if (response.status === 200) {
+      const response = await axiosClient.post('competitor/add', body);
+      if (response.status === 201) {
         toast({
           title: 'Poprawnie dodano zawodnika.',
           status: 'success',
@@ -96,7 +77,6 @@ export const addCompetitor = (body, authContext, toast) => {
           isClosable: true,
         });
       }
-
       dispatch({ type: 'ADD_COMPETITOR', payload: response.data });
     } catch (e) {
       toast({
@@ -109,17 +89,11 @@ export const addCompetitor = (body, authContext, toast) => {
   };
 };
 
-export const updateCompetitor = (id, body, authContext, toast) => {
+export const updateCompetitor = (id, body, toast) => {
   return async dispatch => {
     try {
-      const response = await axios.patch(`${Config.API_URL}competitor/${id}`, {
-        body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json', authorization: authContext.token },
-      });
+      const response = await axiosClient.patch(`${Config.API_URL}competitor/${id}`, body);
 
-      if (response.status === 401) {
-        authContext.logout();
-      }
       if (response.status === 200) {
         toast({
           title: 'Poprawnie zaktualizowano zawodnika.',

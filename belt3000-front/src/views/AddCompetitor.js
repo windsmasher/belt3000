@@ -8,7 +8,7 @@ import ButtonComponent from '../components/ButtonComponent';
 import Subtitle from '../components/Subtitle';
 import { apiCall } from '../apiCall';
 import { useSelector, useDispatch } from 'react-redux';
-import { addCompetitor, updateCompetitor } from '../actions/competitor-action';
+import { addCompetitor, updateCompetitor } from '../actions/competitor-actions';
 
 const AddCompetitor = () => {
   const [competitor, setCompetitor] = useState({
@@ -19,41 +19,18 @@ const AddCompetitor = () => {
     stripes: '0',
   });
   const { competitorId } = useParams();
-  const authContext = useContext(AuthContext);
   const toast = useToast();
   const history = useHistory();
   const dispatch = useDispatch();
+  const competitors = useSelector(state => state.competitors);
 
   useEffect(() => {
-    fetchCompetitor();
+    getOneCompetitor();
   }, [competitorId]);
 
-  const fetchCompetitor = async () => {
+  const getOneCompetitor = () => {
     if (competitorId) {
-      await apiCall(
-        `${Config.API_URL}competitor/one/${competitorId}`,
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json', authorization: authContext.token },
-        },
-        toast,
-        '',
-        'Wystąpił błąd.',
-        async res => {
-          const body = await res.json();
-          let competitorTemp = {
-            firstname: body.firstname,
-            lastname: body.lastname,
-            isAdult: body.isAdult.toString(),
-            belt: body.belt,
-            stripes: body.stripes.toString(),
-          };
-          setCompetitor(competitorTemp);
-        },
-        () => {
-          authContext.logout();
-        },
-      );
+      setCompetitor(competitors.find(competitor => competitor.id === Number(competitorId)));
     }
   };
 
@@ -61,9 +38,8 @@ const AddCompetitor = () => {
     event.preventDefault();
     let body = competitor;
     body.isAdult = competitor.isAdult === 'true' ? true : false;
-    competitorId
-      ? dispatch(updateCompetitor(competitorId, body, authContext, toast))
-      : dispatch(addCompetitor(body, authContext, toast));
+    competitorId ? dispatch(updateCompetitor(competitorId, body, toast)) : dispatch(addCompetitor(body, toast));
+    history.push('/competitors');
   };
 
   return (

@@ -1,12 +1,14 @@
-import React, { useContext } from 'react';
-import { AuthContext } from '../AuthContext';
+import React from 'react';
 import { Stack, Flex } from '@chakra-ui/react';
+import { useSelector, useDispatch } from 'react-redux';
 import MenuItem from './MenuItem';
+import { logout } from '../actions/auth-actions';
 
 const Navbar = () => {
-  const authContext = useContext(AuthContext);
+  const dispatch = useDispatch();
+  const authData = useSelector(state => state.authData);
 
-  return authContext.isLoggedIn ? (
+  return authData.token ? (
     <Flex
       bgGradient={['white', 'white', 'linear(to-r, blue.300, pink.900)', 'linear(to-r, blue.300, pink.900)']}
       color={['black', 'black', 'linear(to-r, blue.300, pink.900)', 'linear(to-r, blue.300, pink.900)']}
@@ -38,7 +40,12 @@ const Navbar = () => {
         <MenuItem isLink={true} to="/new-password">
           Zmień hasło
         </MenuItem>
-        <MenuItem isLink={false} onClick={() => authContext.logout()}>
+        <MenuItem
+          isLink={false}
+          onClick={() => {
+            dispatch(logout());
+          }}
+        >
           Wyloguj się
         </MenuItem>
       </Stack>

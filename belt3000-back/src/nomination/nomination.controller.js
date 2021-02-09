@@ -30,7 +30,7 @@ router.post('/add/:competitorId', validateAddNomination, async (req, res, next) 
   const lastNominationDate = new Date(lastNomination?.date);
 
   if (lastNominationDate && isBefore(requestDate, lastNominationDate)) {
-    return res.status(500).json({ errorMsg: 'Data nie może być wcześniejsza od ostatniej daty nominacji' });
+    return res.status(400).send(new Error('Data nie może być wcześniejsza od ostatniej daty nominacji'));
   }
 
   if (
@@ -39,11 +39,11 @@ router.post('/add/:competitorId', validateAddNomination, async (req, res, next) 
     requestDate.getMonth() === lastNominationDate.getMonth() &&
     requestDate.getDate() === lastNominationDate.getDate()
   ) {
-    return res.status(500).json({ errorMsg: 'Data nie może być równa dacie ostatniej nominacji' });
+    return res.status(400).json({ errorMsg: 'Data nie może być równa dacie ostatniej nominacji' });
   }
 
   if (lastBeltNomination && lastBeltNomination.nominationLevel === 'czarny' && Number(req.body.nominationType) === 0) {
-    return res.status(500).json({ errorMsg: 'Ta osoba ma już czarny pas' });
+    return res.status(400).json({ errorMsg: 'Ta osoba ma już czarny pas' });
   }
 
   let competitor;
@@ -209,7 +209,7 @@ router.delete('/previous/:competitorId', async (req, res, next) => {
     return next(err);
   }
 
-  return res.status(200).json();
+  return res.status(200).json(nominationToDelete.id);
 });
 
 router.patch('/edit-description/:id', withAuth, validateEditDescription, async (req, res, next) => {
@@ -225,7 +225,7 @@ router.patch('/edit-description/:id', withAuth, validateEditDescription, async (
 
   nomination.description = req.body.description;
   await nominationRepository.save(nomination);
-  return res.status(200).json();
+  return res.status(200).json(nomination);
 });
 
 module.exports = router;

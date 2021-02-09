@@ -1,84 +1,35 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Config } from '../config/config';
 import { useToast } from '@chakra-ui/react';
 import { AuthContext } from '../AuthContext';
 import NominationTable from '../components/NominationTable/NominationTable';
-import { apiCall } from '../apiCall';
+import { useSelector, useDispatch } from 'react-redux';
+import { getAllCompetitors } from '../actions/competitor-actions';
+import { getAllNominations, getNominationsByCompetitor, deleteLastNomination } from '../actions/nomination-actions';
 
 const Nominations = () => {
-  const [nominations, setNominations] = useState([]);
-  const [competitors, setCompetitors] = useState([]);
   const [selectedCompetitor, setSelectedCompetitor] = useState('all');
   const [nominationsDownloaded, setNominationsDownloaded] = useState(false);
   const [isEditDescriptionId, setIsEditDescriptionId] = useState(null);
   const [tempDescriptions, setTempDescriptions] = useState([]);
   const authContext = useContext(AuthContext);
   const toast = useToast();
+  const dispatch = useDispatch();
+  const { competitors, nominations } = useSelector(state => state);
 
   useEffect(() => {
     fetchAllNominations();
-    fetchAllCompetitors();
+    dispatch(getAllCompetitors(toast));
   }, []);
 
-  const fetchAllCompetitors = async () => {
-    apiCall(
-      `${Config.API_URL}competitor/all`,
-      {
-        method: 'GET',
-        headers: { authorization: authContext.token },
-      },
-      toast,
-      '',
-      'Wystąpił błąd.',
-      async res => {
-        const body = await res.json();
-        setCompetitors(body);
-      },
-      () => {
-        authContext.logout();
-      },
-    );
-  };
-
   const fetchAllNominations = async () => {
-    apiCall(
-      `${Config.API_URL}nomination/all`,
-      {
-        headers: { authorization: authContext.token },
-      },
-      toast,
-      '',
-      'Wystąpił błąd.',
-      async res => {
-        const body = await res.json();
-        setNominations(body);
-        setTempDescriptions(body.map(nomination => nomination.description));
-        setNominationsDownloaded(true);
-      },
-      () => {
-        authContext.logout();
-      },
-    );
+    await dispatch(getAllNominations(toast));
+    setNominationsDownloaded(true);
+    setTempDescriptions(nominations.map(nomination => nomination.description));
   };
 
   const fetchNominationsByCompetitor = async competitorId => {
-    apiCall(
-      `${Config.API_URL}nomination/by-competitor/${competitorId}`,
-      {
-        headers: { authorization: authContext.token },
-      },
-      toast,
-      '',
-      'Błąd pobrania listy nominacji.',
-      async res => {
-        const body = await res.json();
-        setNominations(body);
-        setTempDescriptions(body.map(nomination => nomination.description));
-      },
-      () => {
-        authContext.logout();
-      },
-    );
+    await dispatch(getNominationsByCompetitor(competitorId, toast));
+    setTempDescriptions(nominations.map(nomination => nomination.description));
   };
 
   const handleNominationPerson = async event => {
@@ -91,43 +42,13 @@ const Nominations = () => {
   };
 
   const deletePreviousNomination = async () => {
-    apiCall(
-      `${Config.API_URL}nomination/previous/${selectedCompetitor}`,
-      {
-        method: 'DELETE',
-        headers: { authorization: authContext.token },
-      },
-      toast,
-      'Poprawnie usunięto ostatnią nominacje.',
-      'Błąd usunięcia ostatniej nominacji.',
-      async res => {
-        fetchAllNominations();
-      },
-      () => {
-        authContext.logout();
-      },
-    );
+    dispatch(deleteLastNomination(selectedCompetitor, toast));
   };
 
   const updateDescription = async (nominationId, description) => {
-    apiCall(
-      `${Config.API_URL}nomination/edit-description/${nominationId}`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify({ description: description }),
-        headers: { 'Content-Type': 'application/json', authorization: authContext.token },
-      },
-      toast,
-      'Poprawnie zaktualizowano opis.',
-      'Wystąpił błąd.',
-      async res => {
-        setIsEditDescriptionId(null);
-        selectedCompetitor === 'all' ? fetchAllNominations() : fetchNominationsByCompetitor(selectedCompetitor);
-      },
-      () => {
-        authContext.logout();
-      },
-    );
+    dispatch(updateDescription(nominationId, description, toast));
+    setIsEditDescriptionId(null);
+    selectedCompetitor === 'all' ? fetchAllNominations() : fetchNominationsByCompetitor(selectedCompetitor);
   };
 
   return (
