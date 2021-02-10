@@ -1,40 +1,48 @@
-import React from 'react';
-import { Box, Input, Link } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Box, Input, Link, useToast } from '@chakra-ui/react';
+import { useDispatch } from 'react-redux';
+import { updateDescription } from '../../actions/nomination-actions';
 
-const EditDescription = ({
-  nom,
-  index,
-  setIsEditDescriptionId,
-  isEditDescriptionId,
-  nominations,
-  tempDescriptions,
-  setTempDescriptions,
-  updateDescription,
-}) => (
-  <Box>
-    <Box cursor="poiner" onClick={() => setIsEditDescriptionId(nom.id)}>
-      <Input
-        disabled={isEditDescriptionId !== nom.id}
-        name="description"
-        value={tempDescriptions[index]}
-        onChange={e => setTempDescriptions(tempDescriptions.map((desc, i) => (i === index ? e.target.value : desc)))}
-      />
-    </Box>
-    {isEditDescriptionId === nom.id ? (
-      <Box mt={5}>
-        <Link onClick={() => updateDescription(nom.id, tempDescriptions[index])}>Zapisz</Link>
-        <Link
-          ml={5}
-          onClick={() => {
-            setIsEditDescriptionId(null);
-            setTempDescriptions(nominations.map(n => n.description));
-          }}
-        >
-          Anuluj
-        </Link>
+const EditDescription = ({ description, id }) => {
+  const [isEdit, setIsEdit] = useState(false);
+  const [tempDescription, setTempDescription] = useState(description);
+  const dispatch = useDispatch();
+  const toast = useToast();
+
+  return (
+    <Box>
+      <Box cursor="poiner" onClick={() => setIsEdit(true)}>
+        <Input
+          disabled={!isEdit}
+          name="description"
+          defaultValue={description}
+          value={tempDescription}
+          onChange={e => setTempDescription(e.target.value)}
+        />
       </Box>
-    ) : null}
-  </Box>
-);
+      {isEdit ? (
+        <Box mt={5}>
+          <Link
+            onClick={() => {
+              dispatch(updateDescription(id, tempDescription, toast));
+              setIsEdit(false);
+            }}
+          >
+            Zapisz
+          </Link>
+          <Link
+            ml={5}
+            onClick={() => {
+              setIsEdit(false);
+              setTempDescription(description);
+            }}
+          >
+            Anuluj
+          </Link>
+        </Box>
+      ) : null}
+    </Box>
+  );
+};
 
 export default EditDescription;

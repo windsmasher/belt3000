@@ -1,15 +1,13 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { AuthContext } from '../AuthContext';
+import React, { useState, useEffect } from 'react';
 import { useToast } from '@chakra-ui/react';
 import CompetitorTable from '../components/CompetitorTable';
 import { useSelector, useDispatch } from 'react-redux';
 import { getAllCompetitors, deleteCompetitor } from '../actions/competitor-actions';
 
 const Competitors = () => {
-  const authContext = useContext(AuthContext);
   const [competitorsDownloaded, setCompetitorsDownloaded] = useState(true);
-  const toast = useToast();
   const competitors = useSelector(state => state.competitors);
+  const toast = useToast();
   const dispatch = useDispatch();
 
   useEffect(async () => {

@@ -8,14 +8,8 @@ import NominationSelect from './NominationSelect';
 const NominationTable = ({
   nominations,
   competitors,
-  setIsEditDescriptionId,
-  isEditDescriptionId,
-  tempDescriptions,
-  setTempDescriptions,
   selectedCompetitor,
   handleNominationPerson,
-  updateDescription,
-  deletePreviousNomination,
   nominationsDownloaded,
 }) => {
   const [isTable] = useMediaQuery('(min-width: 766px)');
@@ -26,7 +20,6 @@ const NominationTable = ({
         selectedCompetitor={selectedCompetitor}
         handleNominationPerson={handleNominationPerson}
         competitors={competitors}
-        deletePreviousNomination={deletePreviousNomination}
       />
       {!nominationsDownloaded ? (
         <SpinnerComponent />
@@ -52,16 +45,7 @@ const NominationTable = ({
                   <Td>{nom.nomination}</Td>
                   <Td>{new Date(nom.date).toLocaleDateString()}</Td>
                   <Td>
-                    <EditDescription
-                      nom={nom}
-                      index={index}
-                      setIsEditDescriptionId={setIsEditDescriptionId}
-                      isEditDescriptionId={isEditDescriptionId}
-                      nominations={nominations}
-                      tempDescriptions={tempDescriptions}
-                      setTempDescriptions={setTempDescriptions}
-                      updateDescription={updateDescription}
-                    />
+                    <EditDescription description={nom.description} id={nom.id} />
                   </Td>
                 </Tr>
               ))}

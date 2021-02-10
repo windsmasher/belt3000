@@ -103,7 +103,6 @@ export const updateDescription = (id, descr, toast) => {
           isClosable: true,
         });
       }
-
       dispatch({ type: 'UPDATE_DESCRIPTION', payload: response.data });
     } catch (e) {
       toast({

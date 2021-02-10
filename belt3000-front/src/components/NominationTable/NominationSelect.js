@@ -1,10 +1,18 @@
 import React from 'react';
-import { Box, Select, Stack } from '@chakra-ui/react';
+import { Box, Select, Stack, useToast } from '@chakra-ui/react';
 import ButtonComponent from '../ButtonComponent';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { deleteLastNomination } from '../../actions/nomination-actions';
 
-const NominationSelect = ({ selectedCompetitor, handleNominationPerson, competitors, deletePreviousNomination }) => {
+const NominationSelect = ({ selectedCompetitor, handleNominationPerson, competitors }) => {
   const history = useHistory();
+  const dispatch = useDispatch();
+  const toast = useToast();
+
+  const deletePreviousNomination = async () => {
+    dispatch(deleteLastNomination(selectedCompetitor, toast));
+  };
 
   return (
     <Stack

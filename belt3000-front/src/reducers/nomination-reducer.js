@@ -9,7 +9,11 @@ export const nominationReducer = (state = [], action) => {
     case 'DELETE_LAST_NOMINATION':
       return [...state.filter(item => item.id !== action.payload)];
     case 'UPDATE_DESCRIPTION':
-      return [...state.map(item => (item.id === action.payload.id ? action.payload : item))];
+      return [
+        ...state.map(item =>
+          item.id === action.payload.id ? { ...item, description: action.payload.description } : item,
+        ),
+      ];
     default:
       return state;
   }
