@@ -14,6 +14,7 @@ module.exports = new EntitySchema({
     },
     city: {
       type: 'varchar',
+      default: null,
     },
     isAccepted: {
       type: 'boolean',

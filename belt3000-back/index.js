@@ -9,11 +9,11 @@ require('dotenv').config();
 typeorm
   .createConnection({
     type: 'mysql',
-    host: 'localhost',
-    port: 3306,
-    username: 'root',
-    password: '',
-    database: 'belt3000',
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    username: process.env.DB_USER,
+    password: process.env.DB_ROOT_PASS,
+    database: process.env.DB_NAME,
     synchronize: true,
     entities: [
       require('./src/user/user.schema'),
@@ -56,5 +56,5 @@ app.get('/checkToken', withAuth, (req, res) => {
   res.sendStatus(200);
 });
 
-const PORT = 5001;
+const PORT = process.env.SERVER_PORT;
 app.listen(PORT, () => console.log('Server started on port ' + PORT));

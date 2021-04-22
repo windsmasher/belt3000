@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  docker_mysql:
+    container_name: mysql_belt3000
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci
+    image: mariadb:10.4.18
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    volumes:
+      - belt3000-docker-db:/var/lib/mysql
+  phpmyadmin:
+    container_name: phpmyadmin_belt3000
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    ports:
+      - 8081:80
+    environment:
+      PMA_HOST: docker_mysql
+    depends_on:
+      - docker_mysql
+  backend:
+    container_name: backend_belt3000
+    image: backend_belt3000_image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    depends_on:
+      - docker_mysql
+      - phpmyadmin
+volumes:
+  belt3000-docker-db:

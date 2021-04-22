@@ -21,9 +21,11 @@ module.exports = new EntitySchema({
     },
     email: {
       type: 'varchar',
+      default: null,
     },
     password: {
       type: 'varchar',
+      default: null,
     },
     generatedPassword: {
       type: 'varchar',

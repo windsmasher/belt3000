@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index"
+    "start": "nodemon index",
+    "redocker": "docker stop backend_belt3000 && docker rm backend_belt3000 && docker rmi backend_belt3000_image:latest && docker compose up -d"
   },
   "author": "",
   "license": "ISC",
